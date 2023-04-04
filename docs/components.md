@@ -1,0 +1,27 @@
+# Components Design
+
+- src
+    - views : 메인 UI 컴포넌트(일종의 컴포넌트와 유사하게 작용)
+        - Starting : Guest 접속 및 로그인 화면
+        - Main : Main 화면, 게임선택, 옵션설정, 정보 확인 등
+        - Room : 게임의 방(현재는 조커뽑기만 구현예정)
+        - Racing : 미니게임 방(현재는 경마게임 구현예정)
+    - components : view에 사용될 재료들
+        - Main-components
+            - Header
+                - Profile, SettingOption
+            - Content
+                - GameDescriptionText, Loading, Link -> GoRoom
+            - Footer
+                - Link -> Racing
+        - Room-components
+            - JokerRoom
+                - Board
+                - EnemyArea
+                - MyArea
+            - PokerRoom (미구현)
+    - contexts : ViewModel 역할, 기본 리듀서 및 디스패치
+        - ThemeContext : 테마 옵션 (감정에 따른 자동 테마)
+        - UserContext : 유저 정보
+        - JokerGameContext : 조커게임 state 정보
+    - events : 소켓통신을 위한 사용자 이벤트
