@@ -1,10 +1,17 @@
-import React from 'react';
+import React, {useState, useRef} from 'react';
+import { Camera } from "react-camera-pro";
 
 const Racing = () => {
+    const camera = useRef(null);
+    const [image, setImage] = useState(null);
     return (
         <div>
-            <h1>Racing</h1>
+            <Camera ref={camera} />
+      <button onClick={() => setImage(camera.current.takePhoto())}>Take photo</button>
+      <img src={image} alt='Taken photo'/>
+      
         </div>
+
     )
 }
 

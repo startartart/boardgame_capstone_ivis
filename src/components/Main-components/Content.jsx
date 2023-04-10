@@ -51,9 +51,9 @@ const GameModeDescription = styled.div`
     margin-left: 1rem;
 
     img {
-        width: 10rem;
-        height: 12rem;
-        margin: 1rem;
+        width: 8.5rem;
+        height: 11rem;
+        margin-right: 1rem;
 
         animation: fadein 10s infinite;
 
@@ -84,7 +84,7 @@ const GameModeDescription = styled.div`
             justify-content: space-around;
 
             h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
 
             p {
@@ -100,7 +100,7 @@ const GameModeDescription = styled.div`
                 height: 1.5rem;
 
             }
-            margin: 1rem;
+            margin-left: 1rem;
         }
     }
 `;
@@ -131,10 +131,10 @@ const Content = (props) => {
             <SelectGameModeContainer theme={props.theme}>
                 <SelectGameModeBlock 
                 theme={props.theme} onClick={() => setSelectedGameMode(0)} 
-                isActive={selectedGameMode === 0}>도둑잡기</SelectGameModeBlock>
+                isActive={selectedGameMode === 0}>조커뽑기</SelectGameModeBlock>
                 <SelectGameModeBlock 
                 theme={props.theme} onClick={() => setSelectedGameMode(1)}
-                isActive={selectedGameMode === 1}>포커</SelectGameModeBlock>
+                isActive={selectedGameMode === 1}>바퀴벌레 포커</SelectGameModeBlock>
             </SelectGameModeContainer>
             <GameModeDescription theme={props.theme}>
                 {DescriptionText.map((text, index) => {

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGamepad } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
     display: flex;
@@ -17,8 +18,7 @@ const FooterContainer = styled.footer`
 const Footer = () => {
     return (
         <FooterContainer>
-            <FontAwesomeIcon icon={faGamepad} color="white" size="2x"/>
-            <FontAwesomeIcon icon={faGamepad} color="white" size="2x"/>
+            <Link to={'/Racing'}><FontAwesomeIcon icon={faGamepad} color="white" size="2x"/></Link>
         </FooterContainer>
     )
 }

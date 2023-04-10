@@ -2,9 +2,10 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import HashLoader from "react-spinners/HashLoader";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faVideo, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { useUserDispatch, useUserState } from '../../contexts/UserContext';
 import { Link } from 'react-router-dom';
+import Video from '../Video';
 
 const LoadingContainer = styled.div`
     position: absolute;
@@ -13,10 +14,16 @@ const LoadingContainer = styled.div`
     transform: translate(-50%, -50%);
     padding: 1rem;
 
-    p {
+    h2 {
         color: ${props => props.theme.fontColor};
         font-size: 2rem;
         letter-spacing: 0.2rem;
+    }
+
+    p {
+        color: ${props => props.theme.fontColor};
+        font-size: 1.5rem;
+        letter-spacing: 0.2rem; 
     }
 
     width:100%;
@@ -33,15 +40,30 @@ const LoadingContainer = styled.div`
 `;
 
 const Loading = (props) => {
-    const [loading, setLoading] = useState(true);
     const userDispatch = useUserDispatch();
     const { isPlaying, room } = useUserState();
+    const [check, setCheck] = useState(0);
+    const [camera, setCamera] = useState(false);
+    const [test, setTest] = useState(false);
+
     const closeLoadingHandler = () => {
         userDispatch({
             type: 'SET_READY_TOGGLE',
             isReady: false,
             socket: 0
         });
+    }
+
+    const cameraCheckHandler = async () => {
+        await setCamera(true);
+    }
+
+    const setCheckHandler = (value) => {
+        setCheck(value);
+
+        if (value === 10) {
+            setTest(true);
+        }
     }
 
     return (
@@ -56,15 +78,38 @@ const Loading = (props) => {
                 aria-label="Loading Spinner"
                 data-testid="loader"
             />
-            <p>매칭중 ...</p>
+            <h2>매칭중 ...</h2>
             <FontAwesomeIcon icon={faCircleXmark} size="4x" color={props.theme.darkColor} onClick={closeLoadingHandler}/>
             </>:
-            <>
-            <p>매칭이 잡혔습니다 !</p>
-            <Link to={`/room1?room_name=` + room}>GO !</Link>
-            </>
+                <>
+                {test === true ?
+                <>
+                    <h2>테스트 성공 !</h2>
+                    <p>방에 입장하세요.</p>
+                    <Link to={`/room1?room_name=` + room}>
+                        <FontAwesomeIcon icon={faArrowRight} size="4x" color={props.theme.fontColor}/>
+                    </Link>
+                </>: 
+                <>
+                    <>
+                        <h2>매칭이 잡혔습니다 !</h2>
+                        <p>카메라 버튼을 눌러 테스트하세요.</p>
+                        <p>진행률</p>
+                        <p>{check}/10</p>
+                        {camera === true ?
+                            <>
+                                
+                                <Video setCheck={setCheckHandler} level={2}/>
+                            </>:
+                            <>
+                            <FontAwesomeIcon icon={faVideo} size="4x" color={props.theme.fontColor} onClick={cameraCheckHandler}/>
+                            </>
+                        }
+                    </>
+                </>
+                }
+                </>
             }
-            
         </LoadingContainer>
     )
 }
