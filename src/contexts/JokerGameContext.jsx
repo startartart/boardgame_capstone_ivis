@@ -6,6 +6,7 @@ const initialJokerGameState = {
     discardPile : [],
     deckSize: 23,
     turn : 0,
+    myTurn : false,
 }
 
 const jokerGameReducer = (state, action) => {
@@ -38,10 +39,10 @@ const jokerGameReducer = (state, action) => {
                 ...state,
                 discardPile : action.discardPile,
             }
-        case 'SET_DECK_SIZE':
+        case 'SET_MY_TURN':
             return {
                 ...state,
-                deckSize : action.deckSize,
+                myTurn : action.myTurn,
             }
         case 'SET_TURN':
             return {

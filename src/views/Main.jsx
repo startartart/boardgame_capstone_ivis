@@ -10,7 +10,7 @@ import { useUserState } from '../contexts/UserContext';
 import styled from 'styled-components';
 
 const MainContainer = styled.div`
-    ${props => props.loading ? 'filter: blur(5px);' : ''}
+    ${props => props.loading === "true" && `filter: blur(5px);`}
 `;
 
 const Main = () => {
@@ -31,7 +31,7 @@ const Main = () => {
 
     return (
         <>
-        <MainContainer loading={user.isReady}>
+        <MainContainer loading={user.isReady.toString()}>
             <Header theme={theme} user={user} showSetting={showSettingHandler} showProfile={showProfileHandler}/> 
             <Content theme={theme}/>
             <Footer theme={theme}/>

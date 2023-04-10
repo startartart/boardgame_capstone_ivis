@@ -1,15 +1,15 @@
 import React, { useReducer, createContext, useContext } from 'react';
 
 const initialThemeState = {
-    mode: 1,
-    primaryColor : "#840000",
-    secondaryColor : "#990000",
-    thirdColor : "#AD0000",
-    fourthColor : "#C10000",
-    fifthColor : "#D60000",
-
+    mode: 4,
+    primaryColor : "#840084",
+    secondaryColor : "#990099",
+    thirdColor : "#AD00AD",
+    fourthColor : "#C100C1",
+    fifthColor : "#D600D6",
     fontColor : "#FFFFFF",
     darkColor: "#000000",
+    auto: false,
 };
 
 const themeReducer = (state, action) => {
@@ -61,6 +61,11 @@ const themeReducer = (state, action) => {
 
                 fontColor : "#FFFFFF",
                 darkColor: "#000000",
+            }
+        case 'AUTO':
+            return {
+                ...state,
+                auto: true,
             }
         default:
             return state;

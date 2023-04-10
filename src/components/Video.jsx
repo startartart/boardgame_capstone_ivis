@@ -1,16 +1,33 @@
 import * as faceapi from 'face-api.js';
 import React, {useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
 
-const Video = (props) => {
+const CanvasContainer = styled.canvas`
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  z-index: 1;
+`;
+
+const Text = styled.p`
+  position: fixed;
+  //left top
+  top: 0;
+  right: 0;
+  margin: 0;
+`;
+
+
+function Video2(props) {
 
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
 
   const videoRef = useRef();
-  const videoHeight = 480;
-  const videoWidth = 640;
+  const videoHeight = 0;
+  const videoWidth = 0;
   const canvasRef = useRef();
-  
+
   useEffect(() => {
     const loadModels = async () => {
       const MODEL_URL = process.env.PUBLIC_URL + '/models';
@@ -23,12 +40,13 @@ const Video = (props) => {
       ]).then(setModelsLoaded(true));
     }
     loadModels();
+    startVideo();
   }, []);
 
   const startVideo = () => {
     setCaptureVideo(true);
     navigator.mediaDevices
-      .getUserMedia({ video: { width: 300 } })
+      .getUserMedia({ video: { width: 0 } })
       .then(stream => {
         let video = videoRef.current;
         video.srcObject = stream;
@@ -40,30 +58,33 @@ const Video = (props) => {
   }
 
   const handleVideoOnPlay = () => {
+    let cnt = 0;
+    let maxEmotion = '';
     setInterval(async () => {
       if (canvasRef && canvasRef.current) {
         canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
-        const displaySize = {
-          width: videoWidth,
-          height: videoHeight
+
+        const detections = await faceapi.detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+        // console.log(detections.expressions);
+        if (!detections) {
+          maxEmotion = 'error';
+        } else {
+          maxEmotion = Object.keys(detections.expressions).reduce((a, b) => detections.expressions[a] > detections.expressions[b] ? a : b);
         }
 
-        faceapi.matchDimensions(canvasRef.current, displaySize);
-
-        const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-
-        const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-        canvasRef && canvasRef.current && canvasRef.current.getContext('2d').clearRect(0, 0, videoWidth, videoHeight);
-        canvasRef && canvasRef.current && faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-        canvasRef && canvasRef.current && faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
-        canvasRef && canvasRef.current && faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
-
-        // detections[0].expressions max value
-        const maxEmotion = Object.keys(detections[0].expressions).reduce((a, b) => detections[0].expressions[a] > detections[0].expressions[b] ? a : b);
-        props.setEmotion(maxEmotion);
+        if (props.level === 1) {
+          props.setEmotion(maxEmotion);
+        } else if (props.level === 2) {
+          if (cnt === 10) {
+            closeWebcam();
+          }
+          props.setCheck(cnt);
+          cnt++;
+        } else if (props.level === 3) {
+          props.setCheck(detections.expressions);
+        }
       }
-    }, 300)
+    }, 500)
   }
 
   const closeWebcam = () => {
@@ -73,36 +94,38 @@ const Video = (props) => {
   }
 
   return (
-    <div>
-      <div style={{ textAlign: 'center', padding: '10px' }}>
-        {
-          captureVideo && modelsLoaded ?
-            <button onClick={closeWebcam} style={{ cursor: 'pointer', backgroundColor: 'green', color: 'white', padding: '15px', fontSize: '25px', border: 'none', borderRadius: '10px' }}>
-              Close Webcam
-            </button>
-            :
-            <button onClick={startVideo} style={{ cursor: 'pointer', backgroundColor: 'green', color: 'white', padding: '15px', fontSize: '25px', border: 'none', borderRadius: '10px' }}>
-              Open Webcam
-            </button>
-        }
-      </div>
+    <>
+    {props.level === 3 ?
+      <Text>웹캠 ON</Text> :
+        captureVideo && modelsLoaded ?
+        props.level === 2 ?
+          null :
+          <button onClick={closeWebcam}>
+            웹캠 닫기
+          </button>
+          :
+          <button onClick={startVideo}>
+            웹캠 재작동하기
+          </button>
+        
+          
+    }
+      
       {
         captureVideo ?
           modelsLoaded ?
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
-                <video ref={videoRef} height={videoHeight} width={videoWidth} onPlay={handleVideoOnPlay} style={{ borderRadius: '10px' }} />
-                <canvas ref={canvasRef} style={{ position: 'absolute' }} />
-              </div>
-            </div>
+            <>
+                <video ref={videoRef} height={videoHeight} width={videoWidth} onPlay={handleVideoOnPlay}/>
+                <CanvasContainer ref={canvasRef} />
+            </>
             :
-            <div>loading...</div>
+            <>로딩중 ...</>
           :
           <>
           </>
       }
-    </div>
+    </>
   );
 }
 
-export default Video;
+export default Video2;
