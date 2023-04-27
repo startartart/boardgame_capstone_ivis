@@ -1,18 +1,16 @@
 import React, { useReducer, createContext, useContext } from 'react';
+import {v4 as uuidv4} from 'uuid';
 
 const initialUserState = {
-    name : "Guest",
+    name : "Guest_" + Math.floor(Math.random() * 100000),
     avatar : "https://www.w3schools.com/howto/img_avatar.png",
     point : 0,
     introudce : "Hello, I'm a new player",
     level : 1,
-    room : "",
-    socket : null,
-    isStatus : false,
-    isReady : false,
-    isPlaying : false,
-    isWin : false,
-    isLose : false,
+
+    uuid : uuidv4(),
+    room : "매칭 완료 시 자동 생성",
+    status : 0,
     error : null,
 }
 
@@ -28,37 +26,15 @@ const userReducer = (state, action) => {
                 ...state,
                 room : action.room,
             }
-        case 'SET_SOCKET':
+        case 'SET_STATUS':
             return {
                 ...state,
-                socket : action.socket,
+                status : action.status,
             }
-        case 'SET_HOST':
+        case 'LEAVE_ROOM':
             return {
                 ...state,
-                isHost : action.isStatus,
-            }
-        case 'SET_READY_TOGGLE':
-            return {
-                ...state,
-                isReady : action.isReady,
-                socket : action.socket,
-            }
-        case 'SET_PLAYING':
-            return {
-                ...state,
-                isPlaying : action.isPlaying,
-                room : action.room,
-            }
-        case 'SET_WIN':
-            return {
-                ...state,
-                isWin : action.isWin,
-            }
-        case 'SET_LOSE':
-            return {
-                ...state,
-                isLose : action.isLose,
+                status : 0
             }
         case 'SET_ERROR':
             return {

@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useJokerGameState, useJokerGameDispatch } from '../../../contexts/JokerGameContext';
+import { PeekSocketEvent, SelectSocketEvent, ListenJokerGameSocketEvents} from '../../../events/JokerGameSocket';
 
 const BoardContainer = styled.div`
     width: 100%;
-    height: 30rem;
+    height: 40%;
+
+    position: fixed;
+    top: 20%;
+    left: 0;
     
     --units: 1.5vmax;
 	--brick1: ${props => props.theme.fifthColor};
@@ -35,6 +40,13 @@ const Card = styled.img`
     & + & {
         margin-left: -3.5rem;
     }
+
+    // props.peeked
+    ${props => props.peeked && `
+        transform: translateY(-4rem);
+
+        transition: transform 0.5s ease-in-out;
+    `}
 `;
 
 const CardBox = styled.div`
@@ -44,78 +56,95 @@ const CardBox = styled.div`
     align-items: center;
 `;
 
-const ClickedCard = styled.img`
-    width: 5rem;
-    height: auto;
-
-    border: 1px solid ${props => props.theme.fontColor};
-    border-radius: 0.5rem;
-`;
 
 const Board = (props) => {
     const [clicked, setClicked] = useState(false);
+    const [current, setCurrent] = useState(-1);
     const jokerGameState = useJokerGameState();
     const jokerGameDispatch = useJokerGameDispatch();
 
-    console.log("E = " + jokerGameState.enemyHand);
-    console.log("My = " + jokerGameState.myHand);
+    ListenJokerGameSocketEvents();
+
+    const cardPeekHandler = async (index) => {
+
+        setCurrent(index);
+        
+        PeekSocketEvent(index);
+    }
 
     const cardSelectHandler = async (index) => {
-        console.log(jokerGameState.enemyHand[index]);
+        // console.log(jokerGameState.enemyHand[index]);
         // enemyHand에서 선택한 카드를 myHand로 옮기기
         let enemyHand = jokerGameState.enemyHand;
         let myHand = jokerGameState.myHand;
 
         myHand.push(jokerGameState.enemyHand[index]);
-        enemyHand.splice(index, 1);
+        // enemyHand.splice(index, 1);
+
+        SelectSocketEvent(index);
 
         await jokerGameDispatch({
-            type: 'TURN_ACTION',
-            myHand: myHand,
-            enemyHand: enemyHand,
+            type: 'SET_TURN',
+            myTurn: false,
         })
 
         setTimeout(() => {
-            checkMyHand();
-        }, 1000);
+            // checkMyHand();
+            
+            jokerGameDispatch({
+                type: 'SET_TURN',
+                myTurn: true,
+            })
+        }, 5000);
 
-        await jokerGameDispatch({
-            type: 'SET_MY_TURN',
-            myTurn: false,
-        })
-        
+        // await jokerGameDispatch({
+        //     type: 'SET_MY_TURN',
+        //     myTurn: false,
+        // })
     }
 
-    const checkMyHand = () => {
-        let myHand = jokerGameState.myHand;
+    // const checkMyHand = () => {
+    //     let myHand = jokerGameState.myHand;
 
-        // myHand에서 같은 숫자의 카드가 2장 이상이면 제거
-        for (let i = 0; i < myHand.length; i++) {
-            let card = myHand[i];
-            let cardNum = card.slice(1, 3);
-            for (let j = i + 1; j < myHand.length; j++) {
-                if (cardNum === myHand[j].slice(1, 3)) {
-                    myHand.splice(i, 1);
-                    myHand.splice(j - 1, 1);
-                    i = 0;
-                    j = 0;
-                }
+    //     // myHand에서 같은 숫자의 카드가 2장 이상이면 제거
+    //     for (let i = 0; i < myHand.length; i++) {
+    //         let card = myHand[i];
+    //         let cardNum = card.slice(1, 3);
+    //         for (let j = i + 1; j < myHand.length; j++) {
+    //             if (cardNum === myHand[j].slice(1, 3)) {
+    //                 myHand.splice(i, 1);
+    //                 myHand.splice(j - 1, 1);
+    //                 i = 0;
+    //                 j = 0;
+    //             }
+    //         }
+    //     }
+    // }
+
+    function ShowEnemyCard(value, index) {
+        let arr = [];
+        for (let i = 0; i < value; i++) {
+            if (i === index) {
+                arr.push(<Card 
+                    src={`./images/cards/back${props.theme.mode}.png`}
+                    alt="card" key={i} onClick={() => cardSelectHandler(i)}
+                    peeked={true}/>)
+            }
+            else {
+                arr.push(<Card src={`./images/cards/back${props.theme.mode}.png`}
+                alt="card" key={i} onClick={() => cardPeekHandler(i)}/>)
             }
         }
-        jokerGameDispatch({
-            type: 'SET_MY_HAND',
-            myHand: myHand,
-        })
+
+        return arr;
     }
+
     return (
         <BoardContainer theme={props.theme} >
             <CardBox onClick={() => setClicked(!clicked)}>
-                {jokerGameState.enemyHand.map((card, index) => {
-                    return (
-                        <Card src={`./images/cards/back${props.theme.mode}.png`} alt="card" key={index} onClick={() => cardSelectHandler(index)}/>
-                        // clicked ? <ClickedCard src={`./images/cards/${card}.png`} alt="card" key={index}/> :
-                    )
-                })}
+                {/* jokerGameState.enemyHand is number, not array. then enemyHand 만큼 반복 */}
+                {ShowEnemyCard(jokerGameState.enemyHand, current)}
+
             </CardBox>
 
             <CardBox onClick={() => setClicked(!clicked)}>

@@ -10,13 +10,13 @@ const SettingOptionContainer = styled.div`
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: ${props => props.theme.secondaryColor};
+    background-color: ${props => props.theme.fontColor};
     width: 21rem;
     height: 24rem;
     border-radius: 1rem;
 
     padding: 1rem;
-    color: ${props => props.theme.fontColor};
+    color: ${props => props.theme.thirdColor};
 
     button {
         width: 100%;
@@ -88,7 +88,7 @@ const SettingOption = (props) => {
 
     return (
         <SettingOptionContainer theme={props.theme}>
-            <FontAwesomeIcon icon={faXmark} color="white" size="2x" onClick={closeSettingHandler}/>
+            <FontAwesomeIcon icon={faXmark} color="black" size="2x" onClick={closeSettingHandler}/>
             <p>색상 선택</p><hr/><p>{emotion}</p><hr/>
             <button concept={1} onClick={() => ChangeThemeHandler(1)}>Theme. Angry 1(😡)</button>
             <button concept={2} onClick={() => ChangeThemeHandler(2)}>Theme. Sad 2(😭)</button>

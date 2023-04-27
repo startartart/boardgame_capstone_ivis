@@ -1,6 +1,7 @@
 import * as faceapi from 'face-api.js';
 import React, {useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
+import { SendEmotionEvent } from '../events/EmotionSocket'
 
 const CanvasContainer = styled.canvas`
   position: absolute;
@@ -17,6 +18,12 @@ const Text = styled.p`
   margin: 0;
 `;
 
+const VideoWrapper = styled.video`
+  &::-webkit-media-controls-play-button {
+    display: none !important;
+    -webkit-appearance: none;
+  }
+`;
 
 function Video2(props) {
 
@@ -46,7 +53,10 @@ function Video2(props) {
   const startVideo = () => {
     setCaptureVideo(true);
     navigator.mediaDevices
-      .getUserMedia({ video: { width: 0 } })
+      .getUserMedia({
+         video: { facingMode: "user", width: 0,
+          } 
+        })
       .then(stream => {
         let video = videoRef.current;
         video.srcObject = stream;
@@ -79,12 +89,30 @@ function Video2(props) {
             closeWebcam();
           }
           props.setCheck(cnt);
-          cnt++;
+          if (maxEmotion !== 'error') {
+            cnt++;
+          }
         } else if (props.level === 3) {
-          props.setCheck(detections.expressions);
+          let emotion;
+          if (detections === undefined) {
+            emotion = 'no face';
+            props.setCheck(emotion, cnt);
+            cnt++;
+          } else {
+            emotion = detections.expressions;
+            props.setCheck(emotion, cnt);
+          }
+
+          if (cnt >= 10) {
+            emotion = 'LOSE';
+            closeWebcam();
+            props.setCheck("LOSE", cnt);
+          }
+          SendEmotionEvent(emotion);
+          
         }
       }
-    }, 500)
+    }, 1000)
   }
 
   const closeWebcam = () => {
@@ -115,7 +143,7 @@ function Video2(props) {
         captureVideo ?
           modelsLoaded ?
             <>
-                <video ref={videoRef} height={videoHeight} width={videoWidth} onPlay={handleVideoOnPlay}/>
+                <VideoWrapper ref={videoRef} height={videoHeight} width={videoWidth} onPlay={handleVideoOnPlay} autoPlay muted playsInline/>
                 <CanvasContainer ref={canvasRef} />
             </>
             :

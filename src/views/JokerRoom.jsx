@@ -2,106 +2,81 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useThemeState } from '../contexts/ThemeContext';
 import { useUserState } from '../contexts/UserContext';
+import { useSocketState, useSocketDispatch } from '../contexts/SocketContext';
+import { SocketEvents, ConnectSocket, DisconnectSocket, socket } from '../events/Socket';
 import Board from '../components/Room-components/JokerRoom/Board';
 import EnemyArea from '../components/Room-components/JokerRoom/EnemyArea';
 import MyArea from '../components/Room-components/JokerRoom/MyArea';
 import { useJokerGameState, useJokerGameDispatch } from '../contexts/JokerGameContext';
 import Video from '../components/Video';
+import Loading from '../components/Main-components/Loading';
+import { GetEmotionEvent } from '../events/EmotionSocket';
+import { ListenJokerGameSocketEvents} from '../events/JokerGameSocket';
 
 const Text = styled.h1`
-    color: ${props => props.theme.fontColor};
+    color: ${props => props.theme.thirdColor};
     font-size: 2rem;
-    letter-spacing: 0.2rem;
-    margin: 0 0 1rem 1rem;
 `;
+
 
 const JokerRoom = () => {
     const theme = useThemeState();
     const user = useUserState();
+    const [noFaceCnt, setNoFaceCnt] = useState(0);
+    const [expression, setExpression] = useState(null);
+    const [connected, setConnected] = useState(false);
+    const [events, setEvents] = useState([]);
 
     const jokerGameState = useJokerGameState();
     const jokerGameDispatch = useJokerGameDispatch();
     
+    SocketEvents();
+    GetEmotionEvent();
+
     useEffect(() => {
-        ShuffleHandler();
-    }, []);
-
-    const ShuffleHandler = () => {
-        let deck = [];
-
-        for (let i = 0; i < 3; i++) {
-            //중복하지 않는 1~13까지의 랜덤한 숫자를 뽑아서 넣기
-            let num = Math.floor(Math.random() * 13) + 1;
-            if (num < 10) num = "0" + num;
-            while (deck.includes("S"+num) || deck.includes("H"+num) || deck.includes("D"+num) || deck.includes("C"+num)) {
-                num = Math.floor(Math.random() * 13) + 1;
-                if (num < 10) {
-                    num = "0" + num;
-                }
-            }
-            deck.push("S"+num);
-            deck.push("H"+num);
-
-            num = Math.floor(Math.random() * 13) + 1;
-            if (num < 10) num = "0" + num;
-            while (deck.includes("S"+num) || deck.includes("H"+num) || deck.includes("D"+num) || deck.includes("C"+num)) {
-                num = Math.floor(Math.random() * 13) + 1;
-                if (num < 10) {
-                    num = "0" + num;
-                }
-            }
-            deck.push("D"+num);
-            deck.push("C"+num);
-        }
-
-        //deck을 상대방과 나누기
-        let myDeck = [];
-        let enemyDeck = [];
-        for (let i =0; i<deck.length; i++) {
-            if (i % 2 === 0) {
-                myDeck.push(deck[i]);
+        // 1초마다 socket 연결 확인
+        const interval = setInterval(() => {
+            if (socket.connected) {
+                console.log("소켓 연결됨");
+                clearInterval(interval);
             } else {
-                enemyDeck.push(deck[i]);
+                console.log("소켓 연결 안됨");
             }
-        }
-
-        let joker = Math.floor(Math.random() * 2);
-        if (joker === 0) {
-            myDeck.push("joker"+theme.mode);
-        } else {
-            enemyDeck.push("joker"+theme.mode);
-        }
-
-        myDeck = myDeck.sort(() => Math.random() - 0.5);
-        enemyDeck = enemyDeck.sort(() => Math.random() - 0.5);
-        
-        jokerGameDispatch({
-            type: 'INITIALIZE',
-            myHand: myDeck,
-            enemyHand: enemyDeck,
-        })
-
-        //start event 필요함
-        setTimeout(() => {
-            jokerGameDispatch({
-                type: 'SET_MY_TURN',
-                myTurn: true,
-            })
         }, 1000);
-    }
 
-    const setCheckHandler = (emotion) => {
-        console.log(emotion);
+        return () => {
+            clearInterval(interval);
+        }
+
+    }, [setConnected]);
+
+    const setCheckHandler = async (detections, cnt) => {
+        console.log(detections);
+        if (detections === 'LOSE') {
+            // ...
+        }
+        setExpression(detections);
+        // expression 알고리즘을 이용하고, 소켓통신을 통해 서버로 보내야함.
+        setNoFaceCnt(cnt);
+        
     }
 
     return (
         <>
-            {/* <Video setCheck={setCheckHandler} level={3}/> */}
-            <Text>방이름 : {user.room}</Text>
-            {/* <button onClick={ShuffleHandler}>섞기</button> */}
-            <EnemyArea theme={theme} user={user}/>
-            <Board theme={theme} user={user}/>
-            {jokerGameState.myTurn ? <MyArea theme={theme} user={user}/> : null}
+            
+            <Text theme={theme}>방이름 : {user.room}</Text>
+            {user.status >= 1 ? <Loading theme={theme}/> :
+                <>
+                <Video setCheck={setCheckHandler} level={3}/>
+                {/* <button onClick={ShuffleHandler}>섞기</button> */}
+
+                <EnemyArea theme={theme} user={user}/>
+                <Board theme={theme} user={user}/>
+                
+                <MyArea theme={theme} user={user} turn={jokerGameState.myTurn}/>
+                
+                </>
+            }
         </>
     )
 }

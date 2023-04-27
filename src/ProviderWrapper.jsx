@@ -2,11 +2,13 @@ import React from 'react';
 import { UserProvider } from './contexts/UserContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { JokerGameProvider } from './contexts/JokerGameContext';
+import { SocketProvider } from './contexts/SocketContext';
 import App from './App';
 
 const ProviderWrapper = () => {
 
     return (
+    <SocketProvider>
       <ThemeProvider>
         <UserProvider>
           <JokerGameProvider>
@@ -14,7 +16,8 @@ const ProviderWrapper = () => {
             </App>
             </JokerGameProvider>
         </UserProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </SocketProvider>
     );
 }
 
