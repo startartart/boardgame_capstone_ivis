@@ -1,12 +1,13 @@
 import React, { useReducer, createContext, useContext } from 'react';
 
 const initialJokerGameState = {
-    myHand : [],
-    enemyHand : [],
+    myHand : ['H02', 'D11', 'joker1', 'H03', 'S13'],
+    enemyHand : 10,
     discardPile : [],
     deckSize: 23,
-    turn : 0,
-    myTurn : false,
+    result : 0,
+    myTurn : true,
+    expression : "EX - 1",
 }
 
 const jokerGameReducer = (state, action) => {
@@ -17,37 +18,21 @@ const jokerGameReducer = (state, action) => {
                 myHand : action.myHand,
                 enemyHand : action.enemyHand,
             }
-        case 'TURN_ACTION':
-            return {
-                ...state,
-                myHand : action.myHand,
-                enemyHand : action.enemyHand,
-            }
-
-        case 'SET_MY_HAND':
-            return {
-                ...state,
-                myHand : action.myHand,
-            }
-        case 'SET_ENEMY_HAND':
-            return {
-                ...state,
-                enemyHand : action.enemyHand,
-            }
-        case 'SET_DISCARD_PILE':
-            return {
-                ...state,
-                discardPile : action.discardPile,
-            }
-        case 'SET_MY_TURN':
+        case 'SET_TURN':
             return {
                 ...state,
                 myTurn : action.myTurn,
             }
-        case 'SET_TURN':
+        case 'SET_DECK':
             return {
                 ...state,
-                turn : action.turn,
+                myHand : action.myHand,
+                enemyHand : action.enemyHand,
+            }
+        case 'SET_RESULT':
+            return {
+                ...state,
+                turn : action.result,
             }
         default:
             throw new Error(`Unhandled action type: ${action.type}`)

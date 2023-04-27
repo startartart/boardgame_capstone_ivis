@@ -2,14 +2,20 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useUserDispatch } from '../../contexts/UserContext';
 import { DescriptionText } from './GameDescriptionText';
+import { useSocketDispatch } from '../../contexts/SocketContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
+
+import { useSocketState } from '../../contexts/SocketContext';
+import { SocketEvents } from '../../events/Socket';
 
 const ContentContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 80vh;
+    align-self: center;
 `;
 
 const SelectGameModeContainer = styled.div`
@@ -30,10 +36,10 @@ const SelectGameModeBlock = styled.div`
     width: 25%;
     height: 60%;
     border-radius: 1rem 1rem 0 0;
-    border: 2px solid ${props => props.theme.fourthColor};
+    border: 2px solid ${props => props.theme.fifthColor};
     border-bottom: none;
-    background-color: ${props => props.isActive ? props.theme.fifthColor : props.theme.primaryColor};
-    color: ${props => props.isActive ? props.theme.fontColor : props.theme.fifthColor};
+    background-color: ${props => props.isActive ? props.theme.thirdColor : props.theme.unselectedColor};
+    color: ${props => props.isActive ? props.theme.fourthColor : props.theme.fifthColor};
 `;
 
 const GameModeDescription = styled.div`
@@ -44,7 +50,7 @@ const GameModeDescription = styled.div`
     width: 90%;
     height: 40%;
     border-radius: 0 1rem 1rem 1rem;
-    border: 2px solid ${props => props.theme.fourthColor};
+    border: 2px solid ${props => props.theme.fifthColor};
     //graident
     background: linear-gradient(to bottom right, ${props => props.theme.darkColor}, ${props => props.theme.primaryColor}, ${props => props.theme.secondaryColor});
     color: ${props => props.theme.fontColor};
@@ -109,22 +115,20 @@ const Content = (props) => {
 
     const [selectedGameMode, setSelectedGameMode] = useState(0);
     const userDispatch = useUserDispatch();
+    const socketDispatch = useSocketDispatch();
 
     const SelectedGameHandler = async (selectedGameMode) => {
-        let socket = selectedGameMode + "P231";
         await userDispatch({
-            type: 'SET_READY_TOGGLE',
-            isReady: true,
-            socket: socket
+            type: 'SET_STATUS',
+            status: 1,
         });
-
-        await setTimeout(() => {
-            userDispatch({
-                type: 'SET_PLAYING',
-                isPlaying: true,
-                room: "SERVER323"
-            });
-        }, 3000);
+        // then
+        await socketDispatch({
+            type: 'CONNECTED',
+            socket: false,
+            isStatus: 1
+        });
+        
     }
     return (
         <ContentContainer>
@@ -135,6 +139,9 @@ const Content = (props) => {
                 <SelectGameModeBlock 
                 theme={props.theme} onClick={() => setSelectedGameMode(1)}
                 isActive={selectedGameMode === 1}>바퀴벌레 포커</SelectGameModeBlock>
+                <SelectGameModeBlock 
+                theme={props.theme} onClick={() => setSelectedGameMode(2)}
+                isActive={selectedGameMode === 2}>감정 경마</SelectGameModeBlock>
             </SelectGameModeContainer>
             <GameModeDescription theme={props.theme}>
                 {DescriptionText.map((text, index) => {
@@ -144,7 +151,12 @@ const Content = (props) => {
                                 <div>
                                     <h1>{text.name}</h1>
                                     <p>{text.description}</p>
-                                    <FontAwesomeIcon icon={faChevronRight} onClick={() => SelectedGameHandler(selectedGameMode)}/>
+                                    <Link to={`/room1?room_name=`}>
+                                        <FontAwesomeIcon
+                                        icon={faChevronRight}
+                                        onClick={() => SelectedGameHandler(selectedGameMode)}
+                                        color={props.theme.fifthColor}/>
+                                    </Link>
                                 </div>
                                 <img src={text.path_link} alt={text.name}/>
                             </div>

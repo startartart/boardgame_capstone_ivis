@@ -4,8 +4,10 @@ import HashLoader from "react-spinners/HashLoader";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faVideo, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { useUserDispatch, useUserState } from '../../contexts/UserContext';
+import { useSocketState, useSocketDispatch } from '../../contexts/SocketContext';
 import { Link } from 'react-router-dom';
 import Video from '../Video';
+import { EnterRommSocketEvents, ReadySocketEvent } from '../../events/EnterRoomSocket';
 
 const LoadingContainer = styled.div`
     position: absolute;
@@ -41,17 +43,23 @@ const LoadingContainer = styled.div`
 
 const Loading = (props) => {
     const userDispatch = useUserDispatch();
-    const { isPlaying, room } = useUserState();
+    // const socketDispatch = useSocketDispatch();
     const [check, setCheck] = useState(0);
     const [camera, setCamera] = useState(false);
     const [test, setTest] = useState(false);
 
-    const closeLoadingHandler = () => {
-        userDispatch({
-            type: 'SET_READY_TOGGLE',
-            isReady: false,
-            socket: 0
+    const {socket, isStatus } = useSocketState();
+
+    EnterRommSocketEvents();
+
+    const closeLoadingHandler = async () => {
+
+        // 서버한테 방 나가기 이벤트 보내기
+        await userDispatch({
+            type: 'LEAVE_ROOM',
         });
+
+        // then ..
     }
 
     const cameraCheckHandler = async () => {
@@ -65,10 +73,21 @@ const Loading = (props) => {
             setTest(true);
         }
     }
+    const gameStartHandler = async () => {
+
+        // 서버한테 게임 시작 이벤트 보내기
+        await ReadySocketEvent();
+        await userDispatch({
+            type: 'SET_STATUS',
+            status: 2,
+        });
+        // then
+
+    }
 
     return (
         <LoadingContainer theme={props.theme}>
-            {isPlaying === false ?
+            {isStatus === 1 ?
             <>
                 <HashLoader
                 color={props.theme.fontColor}
@@ -79,16 +98,16 @@ const Loading = (props) => {
                 data-testid="loader"
             />
             <h2>매칭중 ...</h2>
-            <FontAwesomeIcon icon={faCircleXmark} size="4x" color={props.theme.darkColor} onClick={closeLoadingHandler}/>
+            <Link to={'/'}>
+                <FontAwesomeIcon icon={faCircleXmark} size="4x" color={props.theme.darkColor} onClick={closeLoadingHandler}/>
+            </Link>
             </>:
                 <>
                 {test === true ?
                 <>
                     <h2>테스트 성공 !</h2>
-                    <p>방에 입장하세요.</p>
-                    <Link to={`/room1?room_name=` + room}>
-                        <FontAwesomeIcon icon={faArrowRight} size="4x" color={props.theme.fontColor}/>
-                    </Link>
+                    <p>준비하세요.</p>
+                        <FontAwesomeIcon icon={faArrowRight} size="4x" color={props.theme.fontColor} onClick={gameStartHandler}/>
                 </>: 
                 <>
                     <>

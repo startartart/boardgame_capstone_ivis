@@ -6,7 +6,7 @@ const HeaderContainer = styled.header`
     justify-content: space-between;
     align-items: center;
 
-    background: linear-gradient(to bottom right, ${props => props.theme.fontColor}, ${props => props.theme.primaryColor}, ${props => props.theme.darkColor});
+    background: linear-gradient(to bottom right, ${props => props.theme.primaryColor}, ${props => props.theme.secondaryColor});
     padding: 1rem;
     text-align: center;
 
@@ -18,7 +18,7 @@ const HeaderContainer = styled.header`
 `;
 
 const UserProfile = styled.div`
-    color: ${props => props.theme.fontColor};
+    color: ${props => props.theme.fifthColor};
     display: flex;
     margin: 1rem;
 
@@ -36,7 +36,7 @@ const UserProfile = styled.div`
 const Setting = styled.div`
     width: 50px;
     height: 50px;
-    background-color: ${props => props.theme.thirdColor};
+    background-color: ${props => props.theme.secondaryColor};
     color: ${props => props.theme.fontColor};
     border-radius: 50%;
 
@@ -74,7 +74,7 @@ const Header = (props) => {
                 <button onClick={ShowSettingHandler}>Setting</button>
             </Setting>
             <UserProfile theme={props.theme}>
-                <p>Guest00123</p>
+                <p>{props.user.name}</p>
                 <img onClick={ShowProfileHandler} src="https://www.w3schools.com/howto/img_avatar.png" alt="user profile"/>
             </UserProfile>
         </HeaderContainer>
