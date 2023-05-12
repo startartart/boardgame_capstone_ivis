@@ -1,38 +1,61 @@
 import React, { useReducer, createContext, useContext } from 'react';
 
 const initialJokerGameState = {
-    myHand : ['H02', 'D11', 'joker1', 'H03', 'S13'],
-    enemyHand : 10,
-    discardPile : [],
-    deckSize: 23,
-    result : 0,
-    myTurn : true,
-    expression : "EX - 1",
+    myHand : [],
+    enemyHand : 0,
+    result : 0, // 1 : 승리, 2 : 패배
+    myTurn : 2,
+    peek: -1,
+    select: -1,
+    cheat: -1,
+    expression : "./images/emoji/emoji1.png",
+    enemyExpression : "./images/emoji/emoji1.png",
+    exceptionMessage : "실력",
 }
 
 const jokerGameReducer = (state, action) => {
     switch (action.type) {
-        case 'INITIALIZE':
-            return {
-                ...state,
-                myHand : action.myHand,
-                enemyHand : action.enemyHand,
-            }
         case 'SET_TURN':
             return {
                 ...state,
                 myTurn : action.myTurn,
+            }
+        case 'SET_PEEK':
+            return {
+                ...state,
+                peek : action.peek,
+            }
+        case 'SET_SELECT':
+            return {
+                ...state,
+                select : action.select,
+            }
+        case 'SET_CHEAT':
+            return {
+                ...state,
+                cheat : action.cheat,
             }
         case 'SET_DECK':
             return {
                 ...state,
                 myHand : action.myHand,
                 enemyHand : action.enemyHand,
+                peek : -1,
             }
         case 'SET_RESULT':
             return {
                 ...state,
-                turn : action.result,
+                result : action.result,
+            }
+        case 'SET_MY_EXPRESSION':
+            return {
+                ...state,
+                expression : action.expression,
+            }
+        case 'SET_ENEMY_EXPRESSION':
+            return {
+                ...state,
+                enemyExpression : action.enemyExpression,
             }
         default:
             throw new Error(`Unhandled action type: ${action.type}`)

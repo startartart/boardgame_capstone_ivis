@@ -25,13 +25,14 @@ const App = () => {
 
   return (
         <div className="App">
+
           <AppBackground theme={theme}/>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Main/>}/>
-              <Route path="/room1" element={<JokerRoom/>}/>
-              <Route path="/room2" element={<PokerRoom/>}/>
-              <Route path="/racing" element={<Racing/>}/>
+              <Route path="/room0" element={<JokerRoom/>}/>
+              <Route path="/room1" element={<PokerRoom/>}/>
+              <Route path="/room2" element={<Racing/>}/>
               <Route path="/starting" element={<Starting/>}/>
             </Routes>
           </BrowserRouter>

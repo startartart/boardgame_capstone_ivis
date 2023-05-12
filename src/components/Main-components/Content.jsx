@@ -7,15 +7,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
-import { useSocketState } from '../../contexts/SocketContext';
-import { SocketEvents } from '../../events/Socket';
-
 const ContentContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 80vh;
     align-self: center;
+
+
 `;
 
 const SelectGameModeContainer = styled.div`
@@ -26,6 +25,12 @@ const SelectGameModeContainer = styled.div`
     width: 100%;
     height: 10vh;
     margin: 1rem 0 0 1rem;
+
+    @media screen and (min-width: 1200px) {
+        height: 15vh;
+        //center
+        justify-content: center;
+    }
 `;
 
 const SelectGameModeBlock = styled.div`
@@ -40,6 +45,12 @@ const SelectGameModeBlock = styled.div`
     border-bottom: none;
     background-color: ${props => props.isActive ? props.theme.thirdColor : props.theme.unselectedColor};
     color: ${props => props.isActive ? props.theme.fourthColor : props.theme.fifthColor};
+
+    @media screen and (min-width: 1200px) {
+        font-size: 2rem;
+        width: 20%;
+        height: 50%;
+    }
 `;
 
 const GameModeDescription = styled.div`
@@ -56,10 +67,23 @@ const GameModeDescription = styled.div`
     color: ${props => props.theme.fontColor};
     margin-left: 1rem;
 
+    @media screen and (min-width: 1200px) {
+        width: 80%;
+        height: 50%;
+        //center
+        margin-left: 11%;
+        border-radius: 1rem;
+    }
+
     img {
         width: 8.5rem;
         height: 11rem;
         margin-right: 1rem;
+
+        @media screen and (min-width: 1200px) {
+            width: 15rem;
+            height: 20rem;
+        }
 
         animation: fadein 10s infinite;
 
@@ -86,15 +110,20 @@ const GameModeDescription = styled.div`
             display: flex;
             flex-direction: column;
             align-items: left;
-
             justify-content: space-around;
 
             h1 {
                 font-size: 2rem;
+                @media screen and (min-width: 1200px) {
+                    font-size: 3.5rem;
+                }
             }
 
             p {
                 font-size: 0.8rem;
+                @media screen and (min-width: 1200px) {
+                    font-size: 1.5rem;
+                }
             }
 
             svg {
@@ -105,6 +134,11 @@ const GameModeDescription = styled.div`
                 width: 1.5rem;
                 height: 1.5rem;
 
+                @media screen and (min-width: 1200px) {
+                    font-size: 4rem;
+                    width: 4rem;
+                    height: 4rem;
+                }
             }
             margin-left: 1rem;
         }
@@ -118,17 +152,16 @@ const Content = (props) => {
     const socketDispatch = useSocketDispatch();
 
     const SelectedGameHandler = async (selectedGameMode) => {
-        await userDispatch({
-            type: 'SET_STATUS',
-            status: 1,
-        });
-        // then
-        await socketDispatch({
-            type: 'CONNECTED',
-            socket: false,
-            isStatus: 1
-        });
-        
+        // await userDispatch({
+        //     type: 'SET_STATUS',
+        //     status: 1,
+        // });
+        // // then
+        // await socketDispatch({
+        //     type: 'CONNECTED',
+        //     socket: false,
+        //     isStatus: 1
+        // });
     }
     return (
         <ContentContainer>
@@ -138,7 +171,7 @@ const Content = (props) => {
                 isActive={selectedGameMode === 0}>조커뽑기</SelectGameModeBlock>
                 <SelectGameModeBlock 
                 theme={props.theme} onClick={() => setSelectedGameMode(1)}
-                isActive={selectedGameMode === 1}>바퀴벌레 포커</SelectGameModeBlock>
+                isActive={selectedGameMode === 1}>동물 포커</SelectGameModeBlock>
                 <SelectGameModeBlock 
                 theme={props.theme} onClick={() => setSelectedGameMode(2)}
                 isActive={selectedGameMode === 2}>감정 경마</SelectGameModeBlock>
@@ -151,7 +184,7 @@ const Content = (props) => {
                                 <div>
                                     <h1>{text.name}</h1>
                                     <p>{text.description}</p>
-                                    <Link to={`/room1?room_name=`}>
+                                    <Link to={`/room${index}`}> 
                                         <FontAwesomeIcon
                                         icon={faChevronRight}
                                         onClick={() => SelectedGameHandler(selectedGameMode)}

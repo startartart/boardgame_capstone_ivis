@@ -24,7 +24,6 @@ const Main = () => {
         setShowProfile(!showProfile);
         setShowSetting(false);
     }
-
     return (
         <>
         <>

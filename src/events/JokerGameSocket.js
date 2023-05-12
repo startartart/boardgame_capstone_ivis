@@ -19,7 +19,6 @@ export const TimeOutSocketEvent = () => {
 }
 
 export const ListenJokerGameSocketEvents = () => {
-    const userDispatch = useSocketDispatch();
     const jokerGameDispatch = useJokerGameDispatch();
 
     useEffect(() => {
@@ -41,17 +40,52 @@ export const ListenJokerGameSocketEvents = () => {
             console.log('상대방의 덱 사이즈는', data.enemyDeckSize);
         });
 
-        socket.on('result', (data) => {
+        socket.on('peek', (data) => {
             jokerGameDispatch({
-                type: 'SET_RESULT',
-                result: data,
+                type: 'SET_PEEK',
+                peek: data,
             });
+            console.log('상대의 픽은 ' + data + ' 입니다.');
+        });
+
+        socket.on('select', (data) => {
+            jokerGameDispatch({
+                type: 'SET_SELECT',
+                select: data,
+            });
+            console.log('당신의 선택은 ' + data + ' 입니다.');
+        });
+
+        socket.on('exception', (data) => {
+            jokerGameDispatch({
+                type: 'SET_EXCEPTION',
+                exceptionMessage: data,
+            });
+            console.log('예외 발생 : ' + data);
+        })
+
+        socket.on('result', (data) => {
+            if (data == 3) {
+                jokerGameDispatch({
+                    type: 'SET_RESULT',
+                    result: 2,
+                });
+            } else {
+                jokerGameDispatch({
+                    type: 'SET_RESULT',
+                    result: data,
+                });
+            }
+            
             console.log('당신의 결과는 ' + data + ' 입니다.');
         });
 
         return () => {
             socket.off('role');
+            socket.off('peek');
+            socket.off('select');
             socket.off('deck');
+            socket.off('exception');
             socket.off('result');
         }
 
