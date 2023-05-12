@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useSocketDispatch } from '../contexts/SocketContext';
-import { useUserState, useUserDispatch } from '../contexts/UserContext';
-import { useJokerGameDispatch } from '../contexts/JokerGameContext';
+import { useUserDispatch } from '../contexts/UserContext';
 import { socket } from './Socket';
 
 export const InitSocketEvent = () => {
@@ -10,10 +9,8 @@ export const InitSocketEvent = () => {
 }
 
 export const ReadySocketEvent = () => {
-
     socket.emit('ready', 'ok');
     console.log('ready 이벤트 발생');
-    
 }
 
 export function EnterRommSocketEvents() {
@@ -47,26 +44,41 @@ export function EnterRommSocketEvents() {
         socket.on('ready', (data) => {
             console.log('곧 게임이 시작됩니다. 서버에서 패 나누는 중 ...');
 
-            userDispatch({
-                type: 'SET_STATUS',
-                status: 0
-            });
-
+            if (data === "ok") {
+                userDispatch({
+                    type: 'SET_STATUS',
+                    status: 3
+                });
+            } else if (data === 'timeout') {
+                userDispatch({
+                    type: 'SET_STATUS',
+                    status: -1
+                });
+            }
         });
 
-        // socket.on('init', (data) => {
-        //     jokerGameDispatch({
-        //         type: 'INITIALIZE',
-        //         myHand: data.myDeck,
-        //         enemyHand: enemyDeck,
-        //     });
-        //     console.log('게임이 시작되었습니다. : ' + data.room);
-        // });
+        socket.on('result', (data) => {
+            console.log('상대가 나갔습니다. 게임을 종료합니다.');
+
+            userDispatch({
+                type: 'SET_STATUS',
+                status: -1
+            });
+
+            socketDispatch({
+                type: 'DISCONNECTED',
+                socket: false,
+                isStatus: -1
+            });
+        });
+
+        console.log('on 함')
 
         return () => {
             socket.off('set_id');
             socket.off('set_room');
             socket.off('ready');
+            socket.off('result');
             // socket.off('init');
             console.log(socket, "준비과정 끝.")
         }

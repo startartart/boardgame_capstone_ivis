@@ -2,6 +2,7 @@ import * as faceapi from 'face-api.js';
 import React, {useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { SendEmotionEvent } from '../events/EmotionSocket'
+import { useJokerGameState } from '../contexts/JokerGameContext';
 
 const CanvasContainer = styled.canvas`
   position: absolute;
@@ -25,7 +26,9 @@ const VideoWrapper = styled.video`
   }
 `;
 
-function Video2(props) {
+function Video(props) {
+
+  const { result } = useJokerGameState();
 
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
@@ -48,6 +51,13 @@ function Video2(props) {
     }
     loadModels();
     startVideo();
+
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        closeWebcam();
+      }
+        
+    }
   }, []);
 
   const startVideo = () => {
@@ -69,6 +79,7 @@ function Video2(props) {
 
   const handleVideoOnPlay = () => {
     let cnt = 0;
+
     let maxEmotion = '';
     setInterval(async () => {
       if (canvasRef && canvasRef.current) {
@@ -95,21 +106,29 @@ function Video2(props) {
         } else if (props.level === 3) {
           let emotion;
           if (detections === undefined) {
-            emotion = 'no face';
+            emotion = './images/emoji/emoji0.png';
             props.setCheck(emotion, cnt);
             cnt++;
           } else {
-            emotion = detections.expressions;
+            if (detections.expressions['neutral'] >= 0.99) {
+              emotion = "./images/emoji/emoji1.png"; // 무표정
+            } else if (detections.expressions['neutral'] >= 0.50) {
+              emotion = "./images/emoji/emoji2.png"; // 웃음
+            } else if (detections.expressions['neutral'] >= 0.70) {
+              emotion = "./images/emoji/emoji3.png"; // 살짝 당황
+            } else {
+              emotion = "./images/emoji/emoji4.png"; // 기타
+            }
+            
             props.setCheck(emotion, cnt);
           }
 
-          if (cnt >= 10) {
-            emotion = 'LOSE';
-            closeWebcam();
-            props.setCheck("LOSE", cnt);
-          }
+          // if (cnt >= 10) {
+          //   emotion = './images/emoji/emoji0.png';
+          //   closeWebcam();
+          //   props.setCheck("LOSE", cnt);
+          // }
           SendEmotionEvent(emotion);
-          
         }
       }
     }, 1000)
@@ -156,4 +175,4 @@ function Video2(props) {
   );
 }
 
-export default Video2;
+export default Video;

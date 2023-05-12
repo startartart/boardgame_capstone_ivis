@@ -7,7 +7,7 @@ import { InitSocketEvent } from './EnterRoomSocket';
 //     {"path": "/api/socket.io", "forceNew": true, "reconnectionAttempts": 3, "timeout": 2000});
 
 const url =  process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://capstone.ivis.dev";
-export const socket = io(url, {
+export const socket = io("https://capstone.ivis.dev", {
     path: "/api/socket.io/",
     transports: ["websocket", "polling"],
     autoConnect: false,
@@ -19,6 +19,7 @@ export const ConnectSocket = () => {
     //socket connect() before any event
     socket.connect();
     socket.emit('init', 0);
+    console.log('emit 함')
 
     if (!socket) {
         console.log('Socket Error2');
@@ -43,18 +44,16 @@ export function SocketEvents() {
 
     useEffect(() => {
 
-        socketRef.current && ConnectSocket();
-        socketRef.current = true;
+        // socketRef.current && ConnectSocket();
+        // socketRef.current = true;
 
-        // ConnectSocket();
+        ConnectSocket();
         
         dispatch({
             type: 'CONNECTED',
             socket: true,
             isStatus: 1,
         });
-
-        console.log('Socket Connected');
 
         return () => {
             if (socket.isStatus === 1) {
@@ -64,7 +63,6 @@ export function SocketEvents() {
                     socket: false,
                     isStatus: -1
                 });
-                console.log('Socket DisConnected');
             }
         };
     }, []);
