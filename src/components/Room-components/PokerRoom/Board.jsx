@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useJokerGameState, useJokerGameDispatch } from '../../../contexts/JokerGameContext';
-import { PeekSocketEvent, SelectSocketEvent, ListenJokerGameSocketEvents} from '../../../events/JokerGameSocket';
+import { usePokerGameState, usePokerGameDispatch } from '../../../contexts/PokerGameContext';
+import { PeekSocketEvent, SelectSocketEvent, ListenPokerGameSocketEvents} from '../../../events/PokerGameSocket';
 import { useSocketState } from '../../../contexts/SocketContext';
 
 const BoardContainer = styled.div`
     width: 100%;
-    height: 40%;
+    height: 45%;
 
     position: fixed;
-    top: 28%;
+    top: 25%;
     left: 0;
     
     --maincolor: ${props => props.theme.fifthColor};
@@ -35,29 +35,33 @@ const BoardContainer = styled.div`
 
     margin: 1rem auto;
 
-    & > :nth-child(1) {
-        border-bottom: groove;
-    }
-    & > :nth-child(3) {
+    
+    & > :nth-child(2) {
         border-top: groove;
+        border-bottom: groove;
+        height: 15%;
+    }
+    & > :nth-child(4) {
+        border-top: groove;
+        border-bottom: groove;
+        height: 15%;
     }
 `;
 
 const Card = styled.img`
     //img 크기 고정
-    width: 5rem;
+    width: ${props => props.size}rem;
     height: auto;
-
-    & + & {
-        margin-left: -3.5rem;
-    }
 
     // props.peeked
     ${props => props.peeked && `
-        transform: translateY(-4rem);
-
+        transform: translateY(-2rem);
         transition: transform 0.5s ease-in-out;
     `}
+
+    & + & {
+        margin-left: -0.5rem;
+    }
 `;
 
 const CardBox = styled.div`
@@ -66,10 +70,12 @@ const CardBox = styled.div`
     justify-content: center;
     align-items: center;
 
+    //첫번째요소만 맨 왼쪽으로
     & > :first-child {
         margin-left: 1rem;
         position: absolute;
         left: 0;
+        
     }
 `;
 
@@ -77,12 +83,12 @@ const CardBox = styled.div`
 const Board = (props) => {
 
     const [current, setCurrent] = useState(-1);
-    const jokerGameState = useJokerGameState();
-    const jokerGameDispatch = useJokerGameDispatch();
+    const pokerGameState = usePokerGameState();
+    const pokerGameDispatch = usePokerGameDispatch();
     const { socket } = useSocketState();
 
     if (socket) {
-        ListenJokerGameSocketEvents();
+        ListenPokerGameSocketEvents();
     }
 
     const cardPeekHandler = async (index) => {
@@ -93,12 +99,12 @@ const Board = (props) => {
     }
 
     const cardSelectHandler = async (index) => {
-        if (jokerGameState.myTurn != 1) {
+        if (pokerGameState.myTurn != 1) {
             cardPeekHandler(-1);
         } else {
             SelectSocketEvent(index);
 
-        await jokerGameDispatch({
+        await pokerGameDispatch({
             type: 'SET_TURN',
             myTurn: 0,
         })
@@ -117,12 +123,21 @@ const Board = (props) => {
                 arr.push(<Card 
                     src={`./images/cards/back${props.theme.mode}.png`}
                     alt="card" key={i} onClick={() => cardSelectHandler(i)}
-                    peeked={true}/>)
+                    peeked={true} size={3.5}/>)
             }
             else {
                 arr.push(<Card src={`./images/cards/back${props.theme.mode}.png`}
-                alt="card" key={i} onClick={() => cardPeekHandler(i)}/>)
+                alt="card" key={i} onClick={() => cardPeekHandler(i)} size={3.5}/>)
             }
+        }
+        return arr;
+    }
+
+    function ShownEnemyCard(value) {
+        let arr = [];
+        for (let i = 0; i < value; i++) {
+            arr.push(<Card src={`./images/poker_cards/${pokerGameState.enemyShowHand[i]}.png`}
+                alt="card" key={i} onClick={() => cardCheatHandler(i)} size={3}/>)
         }
         return arr;
     }
@@ -132,43 +147,49 @@ const Board = (props) => {
         for (let i = 0; i < value; i++) {
             if (i == index) {
                 // if joker is peeked
-                if (jokerGameState.myHand[i] == 'joker') {
-                    arr.push(<Card src={`./images/cards/${jokerGameState.myHand[i]}${props.theme.mode}.png`}
-                    alt="card" key={i} onClick={() => cardCheatHandler(i)}
-                    peeked={true}/>)
-                } else {
-                    arr.push(<Card src={`./images/cards/${jokerGameState.myHand[i]}.png`}
-                    alt="card" key={i} onClick={() => cardCheatHandler(i)}
-                    peeked={true}/>)
-                }
-                
+                arr.push(<Card src={`./images/poker_cards/${pokerGameState.myHand[i]}.png`}
+                alt="card" key={i} onClick={() => cardCheatHandler(i)}
+                peeked={true} size={3.5}/>)
             }
             else {
-                if (jokerGameState.myHand[i] == 'joker') {
-                    arr.push(<Card src={`./images/cards/${jokerGameState.myHand[i]}${props.theme.mode}.png`}
-                    alt="card" key={i} onClick={() => cardCheatHandler(i)}/>)
-                } else {
-                    arr.push(<Card src={`./images/cards/${jokerGameState.myHand[i]}.png`}
-                    alt="card" key={i} onClick={() => cardCheatHandler(i)}/>)
-                }
+                arr.push(<Card src={`./images/poker_cards/${pokerGameState.myHand[i]}.png`}
+                alt="card" key={i} onClick={() => cardCheatHandler(i)} size={3.5}/>)
             }
         }
         return arr;
     }
 
+    function ShownMyCard(value) {
+        let arr = [];
+        for (let i = 0; i < value; i++) {
+            arr.push(<Card src={`./images/poker_cards/${pokerGameState.myShowHand[i]}.png`}
+                alt="card" key={i} onClick={() => cardCheatHandler(i)} size={3}/>)
+        }
+        return arr;
+    }
+
     return (
-        <BoardContainer theme={props.theme} >
+        <BoardContainer theme={props.theme}>
             <CardBox>
-                <p>상대 카드</p>
-                {ShowEnemyCard(jokerGameState.enemyHand, current)}
+                <p>상대방 카드</p>
+                {ShowEnemyCard(pokerGameState.enemyHand, current)}
+            </CardBox>
+            <CardBox>
+                <p>상대방 수집 카드</p>
+                {ShownEnemyCard(pokerGameState.enemyShowHand.length)}
             </CardBox>
 
-            {jokerGameState.expression == "./images/emoji/emoji0.png" ? <p>얼굴을 제대로 인식해주세요</p> : <p>조커 뽑기</p> } 
-
+            {pokerGameState.expression == "./images/emoji/emoji0.png" ? <CardBox>얼굴을 제대로 인식해주세요</CardBox> : <CardBox>동물 포커</CardBox> } 
+            
+            <CardBox>
+                <p>내 수집 카드</p>
+                {ShownMyCard(pokerGameState.myShowHand.length)}
+            </CardBox>
             <CardBox>
                 <p>내 카드</p>
-                {ShowMyCard(jokerGameState.myHand.length, jokerGameState.peek)}
+                {ShowMyCard(pokerGameState.myHand.length, pokerGameState.peek)}
             </CardBox>
+            
         </BoardContainer>
     )
 }

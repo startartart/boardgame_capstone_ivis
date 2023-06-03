@@ -34,10 +34,10 @@ export function EnterRommSocketEvents() {
                 socket: true,
                 isStatus: 2
             });
-            userDispatch({
-                type: 'SET_ROOM',
-                room: data,
-            });
+            // userDispatch({
+            //     type: 'SET_ROOM',
+            //     room: data,
+            // });
             console.log('매칭이 잡혔습니다. 카메라 인식을 확인하고 룸번호를 확인해주세요. : ' + data);
         });
 

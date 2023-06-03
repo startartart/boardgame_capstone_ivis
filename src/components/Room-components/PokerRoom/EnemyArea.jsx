@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'rc-progress';
-import { useJokerGameState } from '../../../contexts/JokerGameContext';
-import { TimeOutSocketEvent } from '../../../events/JokerGameSocket';
 import styled from 'styled-components';
-// import BubbleSpeech from '../PokerRoom/BubbleSpeech';
+import { usePokerGameState } from '../../../contexts/PokerGameContext';
+import BubbleSpeech from '../PokerRoom/BubbleSpeech';
 
-const MyAreaContainer = styled.div`
+const EnemyAreaContainer = styled.div`
     width: 100%;
     height: 20%;
 
     position: fixed;
-    top: 75%;
+    top: 8%;
     left: 0;
 `;
 
@@ -24,14 +23,12 @@ const ExpreesionContainer = styled.div`
     color: ${props => props.theme.fontColor};
 `;
 
-const MyArea = (props) => {
+const EnemyArea = (props) => {
     const [percent, setPercent] = useState(0);
-    const { myTurn } = useJokerGameState();
-    const { expression } = useJokerGameState();
+    const { enemyExpression, myTurn, enemyGuess } = usePokerGameState();
 
-    // myTurn이 true일 때만 percent를 증가시킨다.
     useEffect(() => {
-        if (myTurn == 1) {
+        if (myTurn == 0) {
             const timer = setInterval(increase, 1000);
             return () => {
                 clearInterval(timer);
@@ -43,7 +40,6 @@ const MyArea = (props) => {
 
     const increase = () => {
         if (percent >= 100) {
-            TimeOutSocketEvent();
             setPercent(0);
         } else {
             setPercent(percent + 5);
@@ -51,14 +47,14 @@ const MyArea = (props) => {
     }
 
     return (
-        <MyAreaContainer>
-            <Line percent={percent} strokeWidth="4" strokeColor="#D3D3D3" max="30" />
-            {/* <BubbleSpeech></BubbleSpeech> */}
+        <EnemyAreaContainer>
+            <BubbleSpeech guess={enemyGuess}></BubbleSpeech>
             <ExpreesionContainer theme={props.theme}>
-                <img src={expression} alt="expression-emoji" />
+                <img src={enemyExpression} alt="expression-emoji" />
             </ExpreesionContainer>
-        </MyAreaContainer>
+            <Line percent={percent} strokeWidth="4" strokeColor="#D3D3D3" max="30" />
+        </EnemyAreaContainer>
     )
 }
 
-export default MyArea;
+export default EnemyArea;
