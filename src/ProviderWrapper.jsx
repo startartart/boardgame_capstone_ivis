@@ -3,6 +3,7 @@ import { UserProvider } from './contexts/UserContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { JokerGameProvider } from './contexts/JokerGameContext';
 import { SocketProvider } from './contexts/SocketContext';
+import { PokerGameProvider } from './contexts/PokerGameContext';
 import App from './App';
 
 const ProviderWrapper = () => {
@@ -11,10 +12,12 @@ const ProviderWrapper = () => {
     <SocketProvider>
       <ThemeProvider>
         <UserProvider>
-          <JokerGameProvider>
-            <App>
-            </App>
+          <PokerGameProvider>
+            <JokerGameProvider>
+              <App>
+              </App>
             </JokerGameProvider>
+          </PokerGameProvider>
         </UserProvider>
       </ThemeProvider>
     </SocketProvider>

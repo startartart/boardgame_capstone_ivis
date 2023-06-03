@@ -9,7 +9,7 @@ const initialUserState = {
     level : 1,
 
     uuid : uuidv4(),
-    room : "매칭 완료 시 자동 생성",
+    room : 0, // 0, 1, 2, 3 : 조커게임, 4 : 포커게임, 
     status : 0,
     error : null,
 }

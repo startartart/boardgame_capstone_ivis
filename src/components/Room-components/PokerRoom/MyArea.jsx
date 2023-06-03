@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'rc-progress';
-import { useJokerGameState } from '../../../contexts/JokerGameContext';
+import { usePokerGameState } from '../../../contexts/PokerGameContext';
 import { TimeOutSocketEvent } from '../../../events/JokerGameSocket';
 import styled from 'styled-components';
-// import BubbleSpeech from '../PokerRoom/BubbleSpeech';
+import BubbleSpeech from './BubbleSpeech';
+import GuessLabel from './GuessLabel';
 
 const MyAreaContainer = styled.div`
     width: 100%;
     height: 20%;
 
     position: fixed;
+
     top: 75%;
     left: 0;
 `;
@@ -26,8 +28,7 @@ const ExpreesionContainer = styled.div`
 
 const MyArea = (props) => {
     const [percent, setPercent] = useState(0);
-    const { myTurn } = useJokerGameState();
-    const { expression } = useJokerGameState();
+    const { myTurn, expression, guess } = usePokerGameState();
 
     // myTurn이 true일 때만 percent를 증가시킨다.
     useEffect(() => {
@@ -53,7 +54,7 @@ const MyArea = (props) => {
     return (
         <MyAreaContainer>
             <Line percent={percent} strokeWidth="4" strokeColor="#D3D3D3" max="30" />
-            {/* <BubbleSpeech></BubbleSpeech> */}
+            <BubbleSpeech guess={guess}></BubbleSpeech>
             <ExpreesionContainer theme={props.theme}>
                 <img src={expression} alt="expression-emoji" />
             </ExpreesionContainer>

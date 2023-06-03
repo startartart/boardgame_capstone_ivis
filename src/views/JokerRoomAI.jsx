@@ -2,33 +2,37 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useThemeState } from '../contexts/ThemeContext';
 import { useUserState } from '../contexts/UserContext';
-import { SocketEvents, socket } from '../events/Socket';
+import { SocketEvents, socket, ConnectSocket, DisconnectSocket } from '../events/Socket';
 import Board from '../components/Room-components/JokerRoom/Board';
 import EnemyArea from '../components/Room-components/JokerRoom/EnemyArea';
 import MyArea from '../components/Room-components/JokerRoom/MyArea';
 import { useJokerGameState, useJokerGameDispatch } from '../contexts/JokerGameContext';
 import Video from '../components/Video';
-import Loading from '../components/Main-components/Loading';
 import { GetEmotionEvent } from '../events/EmotionSocket';
 import Win from '../components/Room-components/JokerRoom/Win';
 import Lose from '../components/Room-components/JokerRoom/Lose';
+import { ReadySocketEvent } from '../events/EnterRoomSocket';
+import Loading from '../components/Main-components/Loading';
 
 const Text = styled.h1`
     color: ${props => props.theme.thirdColor};
     font-size: 2rem;
 `;
 
-const JokerRoom = () => {
+const JokerRoomAI = () => {
     const theme = useThemeState();
     const user = useUserState();
 
     const [connected, setConnected] = useState(false);
 
+    const { room } = useUserState();
     const {myTurn, result} = useJokerGameState();
     const jokerGameDispatch = useJokerGameDispatch();
+    const socketDispatch = useJokerGameDispatch();
     
-    SocketEvents(0);
+    SocketEvents(room);
     GetEmotionEvent();
+    // socket connect
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -56,8 +60,8 @@ const JokerRoom = () => {
             
             {user.status <= 2 ? <Loading theme={theme}/> :
                 <>
-                    <Text theme={theme}>턴 : {myTurn == 1 ? "내 차례" : "상대 차례"}</Text>
-                    <Video setCheck={setCheckHandler} level={3}/>
+                    <Text theme={theme}>턴 : {myTurn == 1 ? "내 차례" : "컴퓨터 차례"}</Text>
+                    <Video setCheck={setCheckHandler} level={4}/>
 
                     <EnemyArea theme={theme} user={user} turn={myTurn}/>
                     <Board theme={theme} user={user}/>
@@ -71,4 +75,4 @@ const JokerRoom = () => {
     )
 }
 
-export default JokerRoom;
+export default JokerRoomAI;
