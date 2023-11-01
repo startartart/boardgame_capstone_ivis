@@ -10,8 +10,8 @@ import { useJokerGameState, useJokerGameDispatch } from '../contexts/JokerGameCo
 import Video from '../components/Video';
 import Loading from '../components/Main-components/Loading';
 import { GetEmotionEvent } from '../events/EmotionSocket';
-import Win from '../components/Room-components/JokerRoom/Win';
-import Lose from '../components/Room-components/JokerRoom/Lose';
+import Win from '../components/Room-components/Win';
+import Lose from '../components/Room-components/Lose';
 
 const Text = styled.h1`
     color: ${props => props.theme.thirdColor};
@@ -22,13 +22,12 @@ const JokerRoom = () => {
     const theme = useThemeState();
     const user = useUserState();
 
-    const [expression, setExpression] = useState(null);
     const [connected, setConnected] = useState(false);
 
     const {myTurn, result} = useJokerGameState();
     const jokerGameDispatch = useJokerGameDispatch();
     
-    SocketEvents();
+    SocketEvents(0);
     GetEmotionEvent();
 
     useEffect(() => {
@@ -57,13 +56,13 @@ const JokerRoom = () => {
             
             {user.status <= 2 ? <Loading theme={theme}/> :
                 <>
-                <Text theme={theme}>턴 : {myTurn == 1 ? "내 차례" : "상대 차례"}</Text>
-                <Video setCheck={setCheckHandler} level={3}/>
+                    <Text theme={theme}>턴 : {myTurn == 1 ? "내 차례" : "상대 차례"}</Text>
+                    <Video setCheck={setCheckHandler} level={3}/>
 
-                <EnemyArea theme={theme} user={user} turn={myTurn}/>
-                <Board theme={theme} user={user}/>
-                
-                <MyArea theme={theme} user={user} turn={myTurn}/>
+                    <EnemyArea theme={theme} user={user} turn={myTurn}/>
+                    <Board theme={theme} user={user}/>
+                    
+                    <MyArea theme={theme} user={user} turn={myTurn}/>
                 </>
             }
             </>

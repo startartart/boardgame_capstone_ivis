@@ -9,20 +9,23 @@ const BoardContainer = styled.div`
     height: 40%;
 
     position: fixed;
-    top: 30%;
+    top: 28%;
     left: 0;
     
-    --units: 1.5vmax;
-	--brick1: ${props => props.theme.fifthColor};
-	--brick2: ${props => props.theme.thirdColor};
-	--lines: ${props => props.theme.darkColor};
-	--gp-ln: 50%/calc(var(--units) * 10) calc(var(--units) * 5);
-	--gp-cn: 50%/calc(var(--units) * 5) calc(var(--units) * 5);
-	background: 
-		repeating-conic-gradient(from 90deg at 95% 55%, var(--lines) 0% 25%, #fff0 0% 100%) var(--gp-cn), 
-		repeating-linear-gradient(180deg, var(--lines) 0 5%, #fff0 0 50%, var(--lines) 0 55%, var(--brick2) 0 100% ) var(--gp-ln), 
-		repeating-linear-gradient(90deg, var(--brick1) 0 47.5%, var(--lines) 0 50%, var(--brick1) 0 97.5%, var(--lines) 0 100% ) var(--gp-ln);
+    --maincolor: ${props => props.theme.fifthColor};
+    --subcolor: ${props => props.theme.thirdColor};
+    --backgroundcolor: ${props => props.theme.darkColor};
 
+    background:
+    radial-gradient(var(--maincolor) 3px, transparent 4px),
+    radial-gradient(var(--maincolor) 3px, transparent 4px),
+    linear-gradient(#fff 4px, transparent 0),
+    linear-gradient(45deg, transparent 74px, transparent 75px, var(--subcolor) 75px, var(--subcolor) 76px, transparent 77px, transparent 109px),
+    linear-gradient(-45deg, transparent 75px, transparent 76px, var(--subcolor) 76px, var(--subcolor) 77px, transparent 78px, transparent 109px),
+    #fff;
+    background-size: 109px 109px, 109px 109px, 100% 6px, 109px 109px, 109px 109px;
+    background-position: 54px 55px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
+    
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -31,6 +34,13 @@ const BoardContainer = styled.div`
     border-radius: 2rem;
 
     margin: 1rem auto;
+
+    & > :nth-child(1) {
+        border-bottom: groove;
+    }
+    & > :nth-child(3) {
+        border-top: groove;
+    }
 `;
 
 const Card = styled.img`
@@ -55,6 +65,12 @@ const CardBox = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+
+    & > :first-child {
+        margin-left: 1rem;
+        position: absolute;
+        left: 0;
+    }
 `;
 
 
@@ -143,12 +159,14 @@ const Board = (props) => {
     return (
         <BoardContainer theme={props.theme} >
             <CardBox>
-                {/* jokerGameState.enemyHand is number, not array. then enemyHand 만큼 반복 */}
+                <p>상대 카드</p>
                 {ShowEnemyCard(jokerGameState.enemyHand, current)}
-
             </CardBox>
 
+            {jokerGameState.expression == "./images/emoji/emoji0.png" ? <p>얼굴을 제대로 인식해주세요</p> : <p>조커 뽑기</p> } 
+
             <CardBox>
+                <p>내 카드</p>
                 {ShowMyCard(jokerGameState.myHand.length, jokerGameState.peek)}
             </CardBox>
         </BoardContainer>

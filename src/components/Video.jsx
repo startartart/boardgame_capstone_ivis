@@ -112,26 +112,54 @@ function Video(props) {
           } else {
             if (detections.expressions['neutral'] >= 0.99) {
               emotion = "./images/emoji/emoji1.png"; // 무표정
-            } else if (detections.expressions['neutral'] >= 0.50) {
+            } else if (detections.expressions['neutral'] >= 0.90) {
               emotion = "./images/emoji/emoji2.png"; // 웃음
-            } else if (detections.expressions['neutral'] >= 0.70) {
+            } else if (detections.expressions['neutral'] >= 0.85) {
               emotion = "./images/emoji/emoji3.png"; // 살짝 당황
+            } else if (detections.expressions['neutral'] >= 0.10) {
+              emotion = "./images/emoji/emoji7.png"; // 입 ㅡ
+            } else if (detections.expressions['angry'] >= 0.10) {
+              emotion = "./images/emoji/emoji5.png"; // 뭐야
+            } else if (detections.expressions['happy'] >= 0.50) {
+              emotion = "./images/emoji/emoji8.png"; // 행복해
+            } else if (detections.expressions['sad'] >= 0.90) {
+              emotion = "./images/emoji/emoji6.png"; // 슬픔
             } else {
               emotion = "./images/emoji/emoji4.png"; // 기타
             }
-            
             props.setCheck(emotion, cnt);
           }
-
-          // if (cnt >= 10) {
-          //   emotion = './images/emoji/emoji0.png';
-          //   closeWebcam();
-          //   props.setCheck("LOSE", cnt);
-          // }
           SendEmotionEvent(emotion);
+        } else if (props.level === 4) {
+          let emotion;
+          if (detections === undefined) {
+            emotion = './images/emoji/emoji0.png';
+            props.setCheck(emotion, cnt);
+            cnt++;
+          } else {
+            if (detections.expressions['neutral'] >= 0.99) {
+              emotion = "./images/emoji/emoji1.png"; // 무표정
+            } else if (detections.expressions['neutral'] >= 0.90) {
+              emotion = "./images/emoji/emoji2.png"; // 웃음
+            } else if (detections.expressions['neutral'] >= 0.85) {
+              emotion = "./images/emoji/emoji3.png"; // 살짝 당황
+            } else if (detections.expressions['neutral'] >= 0.10) {
+              emotion = "./images/emoji/emoji7.png"; // 입 ㅡ
+            } else if (detections.expressions['angry'] >= 0.10) {
+              emotion = "./images/emoji/emoji5.png"; // 뭐야
+            } else if (detections.expressions['happy'] >= 0.50) {
+              emotion = "./images/emoji/emoji8.png"; // 행복해
+            } else if (detections.expressions['sad'] >= 0.90) {
+              emotion = "./images/emoji/emoji6.png"; // 슬픔
+            } else {
+              emotion = "./images/emoji/emoji4.png"; // 기타
+            }
+            props.setCheck(emotion, cnt);
+          }
+          SendEmotionEvent(detections.expressions);
         }
       }
-    }, 1000)
+    }, 500)
   }
 
   const closeWebcam = () => {
@@ -142,7 +170,7 @@ function Video(props) {
 
   return (
     <>
-    {props.level === 3 ?
+    {props.level >= 3 ?
       <Text>웹캠 ON</Text> :
         captureVideo && modelsLoaded ?
         props.level === 2 ?
@@ -154,8 +182,6 @@ function Video(props) {
           <button onClick={startVideo}>
             웹캠 재작동하기
           </button>
-        
-          
     }
       
       {

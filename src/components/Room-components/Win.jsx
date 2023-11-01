@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import './Win.scss'
 import { useNavigate } from 'react-router-dom';
-import { DisconnectSocket } from '../../../events/Socket';
-import { useJokerGameState } from '../../../contexts/JokerGameContext';
+import { DisconnectSocket } from '../../events/Socket';
+import { useJokerGameState } from '../../contexts/JokerGameContext';
 
 const WinnerContainer = styled.div`
     position: fixed;

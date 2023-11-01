@@ -1,0 +1,76 @@
+.Header__shape {
+    animation-duration: 4s;
+    animation-timing-function: cubic-bezier(.18,1.17,.03,1.46);
+    animation-fill-mode: backwards;
+    transform-origin: center;
+    // this here is the good stuff
+    transform-box: fill-box;
+  }
+  
+  .Header {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .Header__svg {
+    background: #fff;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    height: 100%;
+    transform: translateY(-50%);
+    z-index: -1;
+    will-change: transform;
+  }
+  
+  .bigSquare {
+    animation-name: bigSquare;
+    animation-fill-mode: forwards;
+  }
+  @keyframes bigSquare {
+    from { transform: translateY(10%) rotate(-80deg) scale(0); }
+    to { transform: translateY(0) rotate(0deg) scale(10); }
+  }
+  .littleSquare {
+    animation-name: littleSquare;
+    animation-fill-mode: forwards;
+  }
+  @keyframes littleSquare {
+    from { transform: translate(226%, 183%) rotate(140deg) scale(0) ; }
+    to { transform: translate(0%, 0%) rotate(0deg) scale(2); }
+  }
+  .triangle {
+    animation-name: triangle;
+    animation-fill-mode: forwards;
+  }
+  @keyframes triangle {
+    from { transform: rotate(-140deg) scale(0) ; }
+    to { transform: rotate(0deg) scale(2); }
+  }
+  .hoop {
+    animation-name: hoop;
+    animation-fill-mode: forwards;
+  }
+  @keyframes hoop {
+    from { transform: translate(-160%, -33%) scale(0) ; }
+    to { transform: translate(0%, 0%) scale(2); }
+  }
+  .bigCircle {
+    animation-name: bigCircle;
+    animation-fill-mode: forwards;
+  }
+  @keyframes bigCircle {
+    from { transform: scale(0) translate(60%, 3%); }
+    to { transform: scale(2) translate(0%, 0%); }
+  }
+  .littleCircle {
+    animation-name: littleCircle;
+    animation-fill-mode: forwards;
+  }
+  @keyframes littleCircle {
+    from { transform: scale(0) }
+    to { transform: scale(2) }
+  }

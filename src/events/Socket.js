@@ -5,7 +5,7 @@ import { InitSocketEvent } from './EnterRoomSocket';
 // import { useUser } from '../contexts/UserContext';
 // export const socket = io(process.env.REACT_APP_SOCKET_URL,
 //     {"path": "/api/socket.io", "forceNew": true, "reconnectionAttempts": 3, "timeout": 2000});
-
+// http://192.168.1.124:3000
 const url =  process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://capstone.ivis.dev";
 export const socket = io("https://capstone.ivis.dev", {
     path: "/api/socket.io/",
@@ -15,15 +15,16 @@ export const socket = io("https://capstone.ivis.dev", {
     reconnectionAttempts: 5,
 });
 
-export const ConnectSocket = () => {
+export function ConnectSocket(num) {
     //socket connect() before any event
     socket.connect();
-    socket.emit('init', 0);
-    console.log('emit 함')
+    socket.emit('init', num); // 1 조커, 11 조커난이도1, 12 조커난이도2, 13 조커난이도3, 2 포커
+    console.log('emit 함, 방은', num);
 
     if (!socket) {
         console.log('Socket Error2');
     }
+    
 };
 
 // export const ReconnectSocket = () => {
@@ -38,16 +39,16 @@ export const DisconnectSocket = () => {
     if (socket) socket.disconnect();
 }
 
-export function SocketEvents() {
+export function SocketEvents(num) {
     const dispatch = useSocketDispatch();
     const socketRef = useRef(false);
 
     useEffect(() => {
 
-        // socketRef.current && ConnectSocket();
+        // socketRef.current && ConnectSocket(num);
         // socketRef.current = true;
 
-        ConnectSocket();
+        ConnectSocket(num);
         
         dispatch({
             type: 'CONNECTED',

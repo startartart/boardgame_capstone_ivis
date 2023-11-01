@@ -3,6 +3,7 @@ import { Line } from 'rc-progress';
 import { useJokerGameState } from '../../../contexts/JokerGameContext';
 import { TimeOutSocketEvent } from '../../../events/JokerGameSocket';
 import styled from 'styled-components';
+// import BubbleSpeech from '../PokerRoom/BubbleSpeech';
 
 const MyAreaContainer = styled.div`
     width: 100%;
@@ -52,6 +53,7 @@ const MyArea = (props) => {
     return (
         <MyAreaContainer>
             <Line percent={percent} strokeWidth="4" strokeColor="#D3D3D3" max="30" />
+            {/* <BubbleSpeech></BubbleSpeech> */}
             <ExpreesionContainer theme={props.theme}>
                 <img src={expression} alt="expression-emoji" />
             </ExpreesionContainer>

@@ -6,6 +6,7 @@ import { useSocketDispatch } from '../../contexts/SocketContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import Select from '../Select';
 
 const ContentContainer = styled.div`
     display: flex;
@@ -13,8 +14,6 @@ const ContentContainer = styled.div`
     width: 100%;
     height: 80vh;
     align-self: center;
-
-
 `;
 
 const SelectGameModeContainer = styled.div`
@@ -119,13 +118,6 @@ const GameModeDescription = styled.div`
                 }
             }
 
-            p {
-                font-size: 0.8rem;
-                @media screen and (min-width: 1200px) {
-                    font-size: 1.5rem;
-                }
-            }
-
             svg {
                 position: relative;
                 top: 0.5rem;
@@ -148,20 +140,16 @@ const GameModeDescription = styled.div`
 const Content = (props) => {
 
     const [selectedGameMode, setSelectedGameMode] = useState(0);
+    const [showSelect, setShowSelect] = useState(false);
     const userDispatch = useUserDispatch();
     const socketDispatch = useSocketDispatch();
 
-    const SelectedGameHandler = async (selectedGameMode) => {
-        // await userDispatch({
-        //     type: 'SET_STATUS',
-        //     status: 1,
-        // });
-        // // then
-        // await socketDispatch({
-        //     type: 'CONNECTED',
-        //     socket: false,
-        //     isStatus: 1
-        // });
+    const SelectedGameHandler = async () => {
+        setShowSelect(true);
+    }
+
+    const closeSelectHandler = () => {
+        setShowSelect(false);
     }
     return (
         <ContentContainer>
@@ -184,12 +172,14 @@ const Content = (props) => {
                                 <div>
                                     <h1>{text.name}</h1>
                                     <p>{text.description}</p>
-                                    <Link to={`/room${index}`}> 
-                                        <FontAwesomeIcon
-                                        icon={faChevronRight}
-                                        onClick={() => SelectedGameHandler(selectedGameMode)}
-                                        color={props.theme.fifthColor}/>
-                                    </Link>
+                                    {showSelect ? <Select text={text} theme={props.theme} index={text.room} closeSelectHandler={closeSelectHandler}/>
+                                    :
+                                    <FontAwesomeIcon
+                                    icon={faChevronRight}
+                                    onClick={() => SelectedGameHandler()}
+                                    color={props.theme.fifthColor}/>
+                                    }
+                                    
                                 </div>
                                 <img src={text.path_link} alt={text.name}/>
                             </div>

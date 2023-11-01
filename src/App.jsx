@@ -4,6 +4,7 @@ import './App.scss';
 import Starting from './views/Starting';
 import Main from './views/Main';
 import JokerRoom from './views/JokerRoom';
+import JokerRoomAI from './views/JokerRoomAI';
 import PokerRoom from './views/PokerRoom';
 import Racing from './views/Racing';
 import { useThemeState } from './contexts/ThemeContext'; 
@@ -31,8 +32,9 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Main/>}/>
               <Route path="/room0" element={<JokerRoom/>}/>
-              <Route path="/room1" element={<PokerRoom/>}/>
-              <Route path="/room2" element={<Racing/>}/>
+              <Route path="/room0ai" element={<JokerRoomAI/>}/>
+              <Route path="/room4" element={<PokerRoom/>}/>
+              <Route path="/room5" element={<Racing/>}/>
               <Route path="/starting" element={<Starting/>}/>
             </Routes>
           </BrowserRouter>
