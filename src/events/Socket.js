@@ -5,7 +5,7 @@ import { InitSocketEvent } from './EnterRoomSocket';
 // import { useUser } from '../contexts/UserContext';
 // export const socket = io(process.env.REACT_APP_SOCKET_URL,
 //     {"path": "/api/socket.io", "forceNew": true, "reconnectionAttempts": 3, "timeout": 2000});
-
+// http://192.168.1.124:3000
 const url =  process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://capstone.ivis.dev";
 export const socket = io("https://capstone.ivis.dev", {
     path: "/api/socket.io/",

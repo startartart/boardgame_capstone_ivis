@@ -82,8 +82,7 @@ const CardBox = styled.div`
 
 const Board = (props) => {
 
-    const [current, setCurrent] = useState(-1);
-    const pokerGameState = usePokerGameState();
+    const {myHand, myShowHand, enemyHand, enemyShowHand, myTurn, expression, peek, guess, select } = usePokerGameState();
     const pokerGameDispatch = usePokerGameDispatch();
     const { socket } = useSocketState();
 
@@ -93,24 +92,25 @@ const Board = (props) => {
 
     const cardPeekHandler = async (index) => {
 
-        setCurrent(index);
+        if (guess >= 1) return;
+
+        pokerGameDispatch({
+            type: 'SET_SELECT',
+            select: index,
+        })
         
         PeekSocketEvent(index);
     }
 
     const cardSelectHandler = async (index) => {
-        if (pokerGameState.myTurn != 1) {
-            cardPeekHandler(-1);
-        } else {
-            SelectSocketEvent(index);
+        if (guess >= 1) return;
 
-        await pokerGameDispatch({
-            type: 'SET_TURN',
-            myTurn: 0,
-        })
-        setCurrent(-1);
+        if (myTurn != 1) {
+            pokerGameDispatch({
+                type: 'SET_SELECT',
+                select: -1,
+            })
         }
-        
     }
 
     const cardCheatHandler = async (index) => {
@@ -136,7 +136,7 @@ const Board = (props) => {
     function ShownEnemyCard(value) {
         let arr = [];
         for (let i = 0; i < value; i++) {
-            arr.push(<Card src={`./images/poker_cards/${pokerGameState.enemyShowHand[i]}.png`}
+            arr.push(<Card src={`./images/poker_cards/${enemyShowHand[i]}.png`}
                 alt="card" key={i} onClick={() => cardCheatHandler(i)} size={3}/>)
         }
         return arr;
@@ -147,12 +147,12 @@ const Board = (props) => {
         for (let i = 0; i < value; i++) {
             if (i == index) {
                 // if joker is peeked
-                arr.push(<Card src={`./images/poker_cards/${pokerGameState.myHand[i]}.png`}
+                arr.push(<Card src={`./images/poker_cards/${myHand[i]}.png`}
                 alt="card" key={i} onClick={() => cardCheatHandler(i)}
                 peeked={true} size={3.5}/>)
             }
             else {
-                arr.push(<Card src={`./images/poker_cards/${pokerGameState.myHand[i]}.png`}
+                arr.push(<Card src={`./images/poker_cards/${myHand[i]}.png`}
                 alt="card" key={i} onClick={() => cardCheatHandler(i)} size={3.5}/>)
             }
         }
@@ -162,7 +162,7 @@ const Board = (props) => {
     function ShownMyCard(value) {
         let arr = [];
         for (let i = 0; i < value; i++) {
-            arr.push(<Card src={`./images/poker_cards/${pokerGameState.myShowHand[i]}.png`}
+            arr.push(<Card src={`./images/poker_cards/${myShowHand[i]}.png`}
                 alt="card" key={i} onClick={() => cardCheatHandler(i)} size={3}/>)
         }
         return arr;
@@ -172,22 +172,22 @@ const Board = (props) => {
         <BoardContainer theme={props.theme}>
             <CardBox>
                 <p>상대방 카드</p>
-                {ShowEnemyCard(pokerGameState.enemyHand, current)}
+                {ShowEnemyCard(enemyHand, select)}
             </CardBox>
             <CardBox>
                 <p>상대방 수집 카드</p>
-                {ShownEnemyCard(pokerGameState.enemyShowHand.length)}
+                {ShownEnemyCard(enemyShowHand.length)}
             </CardBox>
 
-            {pokerGameState.expression == "./images/emoji/emoji0.png" ? <CardBox>얼굴을 제대로 인식해주세요</CardBox> : <CardBox>동물 포커</CardBox> } 
+            {expression == "./images/emoji/emoji0.png" ? <CardBox>얼굴을 제대로 인식해주세요</CardBox> : <CardBox>동물 포커</CardBox> } 
             
             <CardBox>
                 <p>내 수집 카드</p>
-                {ShownMyCard(pokerGameState.myShowHand.length)}
+                {ShownMyCard(myShowHand.length)}
             </CardBox>
             <CardBox>
                 <p>내 카드</p>
-                {ShowMyCard(pokerGameState.myHand.length, pokerGameState.peek)}
+                {ShowMyCard(myHand.length, peek)}
             </CardBox>
             
         </BoardContainer>

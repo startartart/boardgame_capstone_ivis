@@ -8,14 +8,19 @@ export const PeekSocketEvent = (data) => {
     console.log('poker_peek 이벤트 발생', data);
 }
 
-export const SelectSocketEvent = (data) => {
-    socket.emit('poker_select', data);
-    console.log('poker_select 이벤트 발생', data);
-}
-
 export const GuessSocketEvent = (data) => {
     socket.emit('poker_guess', data);
     console.log('poker_guess 이벤트 발생', data);
+}
+
+export const AnswerSocketEvent = (data) => {
+    socket.emit('poker_answer', data);
+    console.log('poker_answer 이벤트 발생', data);
+}
+
+export const SelectSocketEvent = (data1, data2) => {
+    socket.emit('poker_select', data1, data2);
+    console.log('poker_select 이벤트 발생', data1, data2);
 }
 
 export const TimeOutSocketEvent = () => {
@@ -27,7 +32,7 @@ export const ListenPokerGameSocketEvents = () => {
     const pokerGameDispatch = usePokerGameDispatch();
 
     useEffect(() => {
-        socket.on('poker_role', (data) => {
+        socket.on('role', (data) => {
             pokerGameDispatch({
                 type: 'SET_TURN',
                 myTurn: data
@@ -57,17 +62,22 @@ export const ListenPokerGameSocketEvents = () => {
 
         socket.on('poker_guess', (data) => {
             pokerGameDispatch({
-                type: 'SET_MY_GUESS',
-                select: data,
+                type: 'SET_ENEMY_ANSWER',
+                enemyAnswer: data,
+                select_card: 2,
             });
-            console.log('당신의 선택은 ' + data + ' 입니다.');
+            console.log('상대방이 추측한 값은 ' + data + ' 이며, 답변해주세요.');
+        });
+
+        socket.on('poker_answer', (data) => {
+            pokerGameDispatch({
+                type: 'SET_ENEMY_ANSWER',
+                enemyAnswer: data,
+            });
+            console.log('상대의 답변은 ' + data + ' 입니다.');
         });
 
         socket.on('poker_select', (data) => {
-            pokerGameDispatch({
-                type: 'SET_SELECT',
-                select: data,
-            });
             console.log('당신의 선택은 ' + data + ' 입니다.');
         });
 
@@ -79,7 +89,7 @@ export const ListenPokerGameSocketEvents = () => {
             console.log('예외 발생 : ' + data);
         })
 
-        socket.on('poker_result', (data) => {
+        socket.on('result', (data) => {
             if (data == 3) {
                 pokerGameDispatch({
                     type: 'SET_RESULT',
@@ -96,13 +106,12 @@ export const ListenPokerGameSocketEvents = () => {
         });
 
         return () => {
-            socket.off('poker_role');
+            socket.off('role');
             socket.off('poker_peek');
             socket.off('poker_select');
             socket.off('poker_deck');
             socket.off('poker_exception');
-            socket.off('poker_result');
+            socket.off('result');
         }
-
     }, []);
 }

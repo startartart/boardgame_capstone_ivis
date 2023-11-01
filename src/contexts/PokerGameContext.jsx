@@ -1,17 +1,21 @@
 import React, { useReducer, createContext, useContext } from 'react';
 
 const initialPokerGameState = {
-    myHand : ["D4", "D3","K4", "D4", "D3","K4", "D4", "D3"],
-    myShowHand : ["D4", "D3","K4", "D4"],
-    enemyHand : 8,
-    enemyShowHand : ["D4", "D3","K4", "D4"],
-    result : 0, // 1 : 승리, 2 : 패배
+    myHand : [],
+    myShowHand : [],
+    enemyHand : 0,
+    enemyShowHand : [],
+    result : 0, // 1 : 승리, 2 : 패배, 4 : 무승부
     myTurn : 2,
-    peek: -1,
-    select: -1,
-    guess: "./images/poker_cards/O.png",
-    enemyGuess: "./images/poker_cards/D.png",
-    cheat: -1,
+
+    peek: -1, // 상대방이 선택한 카드
+    select: -1, // 내가 선택한 카드
+    guess: 0, // 내가 예상한 횟수 
+    answer: "O", // 나의 질문 및 답변
+    enemyAnswer: "O", // 상대방의 질문 및 답변
+
+    select_card: 0, // 1 : guess, 2 : answer, 3 : waitting, 4 : decide
+
     expression : "./images/emoji/emoji0.png",
     enemyExpression : "./images/emoji/emoji1.png",
     exceptionMessage : "실력",
@@ -34,10 +38,27 @@ const pokerGameReducer = (state, action) => {
                 ...state,
                 select : action.select,
             }
-        case 'SET_MY_GUESS':
+        case 'SET_GUESS':
             return {
                 ...state,
                 guess : action.guess,
+                select_card : action.select_card
+            }
+        case 'SET_ANSWER':
+            return {
+                ...state,
+                answer : action.answer
+            }
+        case 'SET_ENEMY_ANSWER':
+            return {
+                ...state,
+                enemyAnswer : action.enemyAnswer,
+                select_card : action.select_card
+            }
+        case 'SET_SELECT_CARD':
+            return {
+                ...state,
+                select_card : action.select_card
             }
         case 'SET_DECK':
             return {
@@ -47,6 +68,7 @@ const pokerGameReducer = (state, action) => {
                 enemyHand : action.enemyHand,
                 enemyShowHand : action.enemyShowHand,
                 peek : -1,
+                guess : 0,
             }
         case 'SET_RESULT':
             return {

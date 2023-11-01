@@ -1,0 +1,7 @@
+@font-face {
+  font-family: "BMJUA";
+  src: url("./fonts/BMJUA_otf.otf") format("opentype");
+}
+body {
+  font-family: "BMJUA";
+}/*# sourceMappingURL=index.css.map */

@@ -93,3 +93,51 @@
         - `EmotionSocket` : 감정 전달 소켓 이벤트
         - `EnterRoomSocket` : 게임 대기창 이벤트
         - `JokerGameSocket` : 조커게임 소켓 이벤트
+
+---
+6.08~
+- src : `index`, `ProviderWrapper`, `App`
+    - views : 메인 UI 컴포넌트(일종의 컴포넌트와 유사하게 작용)
+        - `Starting` : Guest 접속 및 로그인 화면
+        - `Main` : Main 화면, 게임선택, 옵션설정, 정보 확인 등
+        - `JokerRoom` : 게임 방(조커 뽑기)
+        - `PokerRoom` : 게임 방(동물 포커)
+        - `Racing` : 게임 방(감정 경마)
+    - components : view에 사용될 재료들
+        - `Video` : 비디오 연결 및 감정확인 컴포넌트
+        - `Loading`
+        - `Select`
+        - Main-components
+            - `Header`
+                - `Profile`, `SettingOption`
+            - `Content`
+                - GameDescriptionText, `Loading`(Link -> `GoRoom`)
+            - `Footer`
+                - Link -> `Racing`
+        - Room-components
+            - `JokerRoom` (구현 완료)
+                - `Board`
+                - `EnemyArea`
+                - `MyArea`
+            - `PokerRoom` (미구현)
+                - `Board`
+                - `EnemyArea`
+                - `MyArea`
+                - `BubbleSpeech`
+                - `Guess`
+            - `Lose`
+            - `Draw`
+            - `Win`
+                - `Rain`
+    - contexts : ViewModel 역할, 기본 리듀서 및 디스패치
+        - `ThemeContext` : 테마 옵션 (감정에 따른 테마)
+        - `UserContext` : 유저 정보
+        - `JokerGameContext` : 유저 조커게임 state 정보
+        - `PokerGameContext` : 유저 포커게임 state 정보
+        - `SocketContext` : 유저 소켓 정보
+    - events : 소켓통신을 위한 사용자 이벤트
+        - `Socket` : 소켓 연결 이벤트
+        - `EmotionSocket` : 감정 전달 소켓 이벤트
+        - `EnterRoomSocket` : 게임 대기창 이벤트
+        - `JokerGameSocket` : 조커게임 소켓 이벤트
+        - `PokerGameSocket` : 포커게임 소켓 이벤트

@@ -1,0 +1,20 @@
+.App {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+.App .App-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url(./images/background.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  opacity: 0.6;
+}/*# sourceMappingURL=App.css.map */

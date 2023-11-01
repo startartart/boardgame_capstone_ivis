@@ -4,7 +4,6 @@ import { usePokerGameState } from '../../../contexts/PokerGameContext';
 import { TimeOutSocketEvent } from '../../../events/JokerGameSocket';
 import styled from 'styled-components';
 import BubbleSpeech from './BubbleSpeech';
-import GuessLabel from './GuessLabel';
 
 const MyAreaContainer = styled.div`
     width: 100%;
@@ -28,11 +27,11 @@ const ExpreesionContainer = styled.div`
 
 const MyArea = (props) => {
     const [percent, setPercent] = useState(0);
-    const { myTurn, expression, guess } = usePokerGameState();
+    const { myTurn, expression, guess, answer, select, select_card } = usePokerGameState();
 
-    // myTurn이 true일 때만 percent를 증가시킨다.
-    useEffect(() => {
-        if (myTurn == 1) {
+    // myTurn이 true일 때, select_card가 변할 때마다 percent를 0으로 초기화
+    useEffect(() => {   
+        if (myTurn == 1|| select_card == 2) {
             const timer = setInterval(increase, 1000);
             return () => {
                 clearInterval(timer);
@@ -40,21 +39,31 @@ const MyArea = (props) => {
         } else {
             setPercent(0);
         }
-    }, [myTurn, percent]);
+    }, [myTurn, percent, select_card]);
+
 
     const increase = () => {
         if (percent >= 100) {
             TimeOutSocketEvent();
             setPercent(0);
         } else {
-            setPercent(percent + 5);
+            // if select_card is 1 or 3 time stop
+            if (select_card == 3) {
+                setPercent(0);
+            } else if (myTurn == 1 && select_card == 2) {
+                setPercent(0);
+            }
+            else {
+                setPercent(percent + 7);
+            }
         }
     }
 
     return (
         <MyAreaContainer>
             <Line percent={percent} strokeWidth="4" strokeColor="#D3D3D3" max="30" />
-            <BubbleSpeech guess={guess}></BubbleSpeech>
+            <BubbleSpeech answer={answer} direction={"right"}/>
+            <BubbleSpeech answer={answer} direction={"left"} area={"mine"}/>
             <ExpreesionContainer theme={props.theme}>
                 <img src={expression} alt="expression-emoji" />
             </ExpreesionContainer>

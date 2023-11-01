@@ -159,7 +159,7 @@ function Video(props) {
           SendEmotionEvent(detections.expressions);
         }
       }
-    }, 1000)
+    }, 500)
   }
 
   const closeWebcam = () => {

@@ -10,8 +10,8 @@ import { useJokerGameState, useJokerGameDispatch } from '../contexts/JokerGameCo
 import Video from '../components/Video';
 import Loading from '../components/Main-components/Loading';
 import { GetEmotionEvent } from '../events/EmotionSocket';
-import Win from '../components/Room-components/JokerRoom/Win';
-import Lose from '../components/Room-components/JokerRoom/Lose';
+import Win from '../components/Room-components/Win';
+import Lose from '../components/Room-components/Lose';
 
 const Text = styled.h1`
     color: ${props => props.theme.thirdColor};

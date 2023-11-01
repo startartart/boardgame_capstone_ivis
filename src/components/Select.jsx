@@ -2,20 +2,31 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useUserDispatch } from '../contexts/UserContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const Text = styled.p`
-    font-size: 3rem;
+    font-size: ${props => props.size}rem;
     margin: 0;
     padding: 0;
     text-align: center;
     color: ${props => props.theme.fourthColor};
 
+    svg {
+        //position right center
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+
+        font-size: 1.5rem;
+    }
 `;
 const SelectContainer = styled.div`
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: fixed;
+    top: 50%;
+    left: 46%;
+    transform: translate(-50%, -45%);
     background-color: ${props => props.theme.fontColor};
     height: 20rem;
     width: 15rem;
@@ -35,10 +46,11 @@ const SelectContainer = styled.div`
         margin-left: 10%;
         height: 2rem;
         background-color: transparent;
-        font-size: 1.2rem;
+        font-size: 1rem;
         color: inherit;
         font-family: inherit;
         font-weight: 700;
+        border: 1px solid;
 
         @media screen and (min-width: 1200px) {
             font-size: 3rem;
@@ -80,14 +92,14 @@ const Select = ( props ) => {
     }
     return (
         <SelectContainer theme={props.theme}>
-            <Text theme={props.theme}>{props.text.name}</Text>
+            <Text theme={props.theme} size={3}>{props.text.name}</Text>
 
             {props.index === 0 ? 
                 <>
                     
                 {showLevel ? 
                     <>
-                        <p>난이도를 선택해주세요</p>
+                        <Text size={1.5}>난이도를 선택해주세요<FontAwesomeIcon icon={faArrowLeft} /></Text>
                         <button onClick={()=>selectGoTo("쉬움")}>쉬움</button>
                         <button onClick={()=>selectGoTo("보통")}>보통</button>
                         <button onClick={()=>selectGoTo("어려움")}>어려움</button>

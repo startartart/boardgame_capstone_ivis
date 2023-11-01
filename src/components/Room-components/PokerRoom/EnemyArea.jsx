@@ -7,7 +7,6 @@ import BubbleSpeech from '../PokerRoom/BubbleSpeech';
 const EnemyAreaContainer = styled.div`
     width: 100%;
     height: 20%;
-
     position: fixed;
     top: 8%;
     left: 0;
@@ -25,10 +24,11 @@ const ExpreesionContainer = styled.div`
 
 const EnemyArea = (props) => {
     const [percent, setPercent] = useState(0);
-    const { enemyExpression, myTurn, enemyGuess } = usePokerGameState();
+    const [check, setCheck] = useState(false);
+    const { enemyExpression, myTurn, enemyAnswer, select_card } = usePokerGameState();
 
     useEffect(() => {
-        if (myTurn == 0) {
+        if (myTurn == 0 || select_card == 3) {
             const timer = setInterval(increase, 1000);
             return () => {
                 clearInterval(timer);
@@ -36,19 +36,26 @@ const EnemyArea = (props) => {
         } else {
             setPercent(0);
         }
-    }, [myTurn, percent]);
+    }, [myTurn, percent, select_card]);
 
     const increase = () => {
         if (percent >= 100) {
             setPercent(0);
         } else {
-            setPercent(percent + 5);
+            if (select_card == 1) {
+                setPercent(0);
+            } else if (myTurn == 0 && select_card == 2) {
+                setPercent(0);
+            }
+            else {
+                setPercent(percent + 7);
+            }
         }
     }
 
     return (
         <EnemyAreaContainer>
-            <BubbleSpeech guess={enemyGuess}></BubbleSpeech>
+            <BubbleSpeech answer={enemyAnswer} direction={"left"} area={"enemy"}/>
             <ExpreesionContainer theme={props.theme}>
                 <img src={enemyExpression} alt="expression-emoji" />
             </ExpreesionContainer>

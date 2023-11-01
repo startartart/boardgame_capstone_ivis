@@ -10,8 +10,10 @@ import { usePokerGameState, usePokerGameDispatch } from '../contexts/PokerGameCo
 import Video from '../components/Video';
 import Loading from '../components/Main-components/Loading';
 import { GetEmotionEvent } from '../events/EmotionSocket';
-import Win from '../components/Room-components/JokerRoom/Win';
-import Lose from '../components/Room-components/JokerRoom/Lose';
+import Win from '../components/Room-components/Win';
+import Lose from '../components/Room-components/Lose';
+import Draw from '../components/Room-components/Draw';
+import Guess from '../components/Room-components/PokerRoom/Guess';
 
 const Text = styled.h1`
     color: ${props => props.theme.thirdColor};
@@ -22,31 +24,54 @@ const PookerRoom = () => {
     const theme = useThemeState();
     const user = useUserState();
 
-    const {myTurn, result} = usePokerGameState();
-    const jokerGameDispatch = usePokerGameDispatch();
+    const [connected, setConnected] = useState(false);
+
+    const { myTurn, result, select_card } = usePokerGameState();
+    const pokerGameDispatch = usePokerGameDispatch();
+
+    SocketEvents(4);
+    GetEmotionEvent();
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (socket.connected) {
+                clearInterval(interval);
+            } else {
+                console.log("소켓 연결 안됨");
+            }
+        }, 1000);
+
+        return () => {
+            clearInterval(interval);
+        }
+
+    }, [setConnected]);
 
     const setCheckHandler = async (detections) => {
-        await jokerGameDispatch({ type: 'SET_MY_EXPRESSION', expression: detections });
+        await pokerGameDispatch({ type: 'SET_MY_EXPRESSION', expression: detections });
     }
 
     return (
         <>
-          {/* {result == 1 ? <Win theme={theme} user={user}/> : 
-            result == 2 ? <Lose theme={theme} user={user}/> : <>
+          {result == 1 ? <Win theme={theme} user={user}/> : 
+            result == 2 ? <Lose theme={theme} user={user}/> : 
+            result == 4 ? <Draw theme={theme} user={user}/> : 
+            <>
 
             {user.status <= 2 ? <Loading theme={theme}/> :
                 <>
                 <Text theme={theme}>턴 : {myTurn == 1 ? "내 차례" : "상대 차례"}</Text>
                 <Video setCheck={setCheckHandler} level={3}/>
 
-                
+                <EnemyArea theme={theme} user={user} turn={myTurn}/>
+                {(select_card == 1 || select_card == 2 || select_card == 4) && <Guess theme={theme} user={user}/>}
+                <Board theme={theme} user={user}/>
+                <MyArea theme={theme} user={user} turn={myTurn}/>
+
                 </>
             }
             </>
-            } */}
-            <EnemyArea theme={theme} user={user} turn={myTurn}/>
-            <Board theme={theme} user={user}/>
-            <MyArea theme={theme} user={user} turn={myTurn}/>
+            }
         </>
     )
 }

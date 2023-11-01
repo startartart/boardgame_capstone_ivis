@@ -9,8 +9,8 @@ import MyArea from '../components/Room-components/JokerRoom/MyArea';
 import { useJokerGameState, useJokerGameDispatch } from '../contexts/JokerGameContext';
 import Video from '../components/Video';
 import { GetEmotionEvent } from '../events/EmotionSocket';
-import Win from '../components/Room-components/JokerRoom/Win';
-import Lose from '../components/Room-components/JokerRoom/Lose';
+import Win from '../components/Room-components/Win';
+import Lose from '../components/Room-components/Lose';
 import { ReadySocketEvent } from '../events/EnterRoomSocket';
 import Loading from '../components/Main-components/Loading';
 

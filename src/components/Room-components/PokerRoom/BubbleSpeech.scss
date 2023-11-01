@@ -1,7 +1,13 @@
-.center{
+.left-center{
     position: relative;
     top: 30%;
     left: 65%;
+}
+
+.right-center{
+    position: relative;
+    top: 30%;
+    left: 5%;
 }
 
 .dialog{
@@ -10,9 +16,23 @@
     background-color: white;
     position: absolute;
     border-radius: 10%;
+	z-index: 1;
 }
 
-.point{
+.right-point{
+	width: 0;
+	height: 0;
+	border-left: 1vh solid transparent;
+	border-right: 1vh solid transparent;
+	border-top: 3vh solid white;
+	position: absolute;
+	top: 45%;
+	right: -10%;
+	transform: rotate(-60deg);
+	z-index: 2;
+}
+
+.left-point{
 	width: 0;
 	height: 0;
 	border-left: 1vh solid transparent;
