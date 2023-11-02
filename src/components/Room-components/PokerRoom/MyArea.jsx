@@ -61,7 +61,7 @@ const MyArea = (props) => {
 
     return (
         <MyAreaContainer>
-            <Line percent={percent} strokeWidth="4" strokeColor="#D3D3D3" max="30" />
+            <Line percent={percent} strokeWidth="2" strokeColor="#D3D3D3" max="30" />
             <BubbleSpeech answer={answer} direction={"right"}/>
             <BubbleSpeech answer={answer} direction={"left"} area={"mine"}/>
             <ExpreesionContainer theme={props.theme}>

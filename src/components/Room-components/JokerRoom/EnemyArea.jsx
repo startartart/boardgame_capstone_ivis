@@ -7,7 +7,6 @@ import { useUserState } from '../../../contexts/UserContext';
 const EnemyAreaContainer = styled.div`
     width: 100%;
     height: 20%;
-
     position: fixed;
     top: 8%;
     left: 0;
@@ -59,7 +58,7 @@ const EnemyArea = (props) => {
                 : <img src="./images/emoji/robot2.png" alt="expression-emoji" />
                 }
             </ExpreesionContainer>
-            <Line percent={percent} strokeWidth="4" strokeColor="#D3D3D3" max="30" />
+            <Line percent={percent} strokeWidth="2" strokeColor="#D3D3D3" max="30" />
         </EnemyAreaContainer>
     )
 }

@@ -59,7 +59,7 @@ const EnemyArea = (props) => {
             <ExpreesionContainer theme={props.theme}>
                 <img src={enemyExpression} alt="expression-emoji" />
             </ExpreesionContainer>
-            <Line percent={percent} strokeWidth="4" strokeColor="#D3D3D3" max="30" />
+            <Line percent={percent} strokeWidth="2" strokeColor="#D3D3D3" max="30" />
         </EnemyAreaContainer>
     )
 }
